@@ -11,4 +11,4 @@ To use:
 
 
 
-Inspired and improved version of https://github.com/ltisz/DecisionWheel.git
+Inspired by and improved version of https://github.com/ltisz/DecisionWheel.git
