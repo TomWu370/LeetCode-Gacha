@@ -79,3 +79,9 @@ while True:
     pygame.display.flip()  # Redraw screen
 
     quit()
+
+
+# To Do:
+# 1) Update pointer.png to include button
+# 2) Add leetcode integration and database for currency
+# 3) Add respin logic
