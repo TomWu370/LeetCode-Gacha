@@ -5,6 +5,9 @@ import sys
 import random
 import math
 
+# api
+# top bar show casing currency
+# database to record
 
 def quit():
     for event in pygame.event.get():
@@ -15,7 +18,7 @@ def quit():
 
 pygame.init()  # Initializing pygame
 font = pygame.font.SysFont(None, 28)
-screen = pygame.display.set_mode((400, 400))
+screen = pygame.display.set_mode((800, 800))
 decisions = ['choice1', 'choice2']
 degree = 0  # starting wheel degree
 num_decisions = len(decisions)
@@ -37,6 +40,11 @@ while True:
 
     screen.fill([255, 255, 255])  # Re-draw screen
     pygame.draw.circle(screen, (0, 0, 0), (200, 200), 200, 3)
+    text = pygame.Surface((200,200))
+    text.fill((0,0,0))
+    score = font.render("Score: ", False, (255, 0, 0))
+    screen.blit(text, (500, 300))
+    screen.blit(score, (500,300))
 
     for i in range(num_decisions):
         # draw separation line for each choice
@@ -76,7 +84,9 @@ while True:
         velocity = 0
         # announce result
 
-    pygame.display.flip()  # Redraw screen
+    pygame.display.update()  # Redraw screen when no argument
+    # pass (start_x, start_y, width, height) to redraw portion of screen
+
 
     quit()
 
