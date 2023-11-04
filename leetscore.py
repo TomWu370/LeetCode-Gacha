@@ -1,11 +1,12 @@
 import leetcode
+import database
 
-DIFFICULTY =  {1:'Easy',
-               2:'Medium',
-               3:'Hard'}
+DIFFICULTY = {1: 'Easy',
+              2: 'Medium',
+              3: 'Hard'}
 
-leetcode_session = "" # "yyy"
-csrf_token = "" # "xxx"
+leetcode_session = ""  # "yyy"
+csrf_token = ""  # "xxx"
 
 configuration = leetcode.Configuration()
 
@@ -17,36 +18,35 @@ configuration.debug = False
 
 api_instance = leetcode.DefaultApi(leetcode.ApiClient(configuration))
 
-# get username
-graphql_request = leetcode.GraphqlQuery(
-query="""
-     {
-       user {
-            username
+
+def getUsername():
+    # get username
+    graphql_request = leetcode.GraphqlQuery(
+        query="""
+         {
+           user {
+                username
+             }
          }
-     }
-     """,
-variables=leetcode.GraphqlQueryVariables(),
-)
-print(api_instance.graphql_post(body=graphql_request))
-
-# print all solved algorithm questions, fetch solved questions along with difficulty
-api_response=api_instance.api_problems_topic_get(topic="all")
-solved_questions=[]
-counter = 0
-for questions in api_response.stat_status_pairs:
-    if questions.status=="ac":
-       solved_questions.append(questions.stat.question__title)
-    if counter <= 5:
-        print(f'difficulty: ',DIFFICULTY[questions.difficulty.level])
-        print(f'status: ',str(questions.status))
-        counter += 1
+         """,
+        variables=leetcode.GraphqlQueryVariables(),
+    )
+    raw_data = api_instance.graphql_post(body=graphql_request)
+    return raw_data.data.user.username
 
 
+def getQuestions():
+    # print all solved algorithm questions, fetch solved questions along with difficulty
+    api_response = api_instance.api_problems_topic_get(topic="all")
+    solved_questions = {'Easy': 0, 'Medium': 0, 'Hard': 0}
+
+    for questions in api_response.stat_status_pairs:
+        if questions.status == "ac":
+            solved_questions[DIFFICULTY[questions.difficulty.level]] += 1
+    return solved_questions
 
 
-print(solved_questions)
-print("Total number of solved questions ",len(solved_questions))
-#
-# api_response=api_instance.api_problems_topic_get_with_http_info(num_solved)
-# print(f'total unsolved: ', len(api_response.stat_status.pairs))
+if __name__ == '__main__':
+    print(getUsername())
+    print(getQuestions())
+    print(database.read())
