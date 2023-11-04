@@ -1,7 +1,6 @@
 import sqlite3
 
 config = {'easy': 100, 'medium': 300, 'hard': 1000, 'cost':1000}
-EASY, MEDIUM, HARD, USED = 0, 1, 2, 3
 
 connection = sqlite3.connect("database.db")
 # allows return rows to be converted to dictionary
