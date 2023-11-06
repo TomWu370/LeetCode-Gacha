@@ -4,6 +4,7 @@ import time
 import sys
 import random
 import math
+import database as db
 
 # api
 # top bar show casing currency
@@ -42,7 +43,9 @@ while True:
     pygame.draw.circle(screen, (0, 0, 0), (200, 200), 200, 3)
     text = pygame.Surface((200,200))
     text.fill((0,0,0))
-    score = font.render("Score: ", False, (255, 0, 0))
+    money = db.getUsable()
+    print(db.read())
+    score = font.render("Score: "+str(money), False, (255, 0, 0))
     screen.blit(text, (500, 300))
     screen.blit(score, (500,300))
 

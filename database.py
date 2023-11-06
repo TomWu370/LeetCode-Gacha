@@ -1,6 +1,6 @@
 import sqlite3
 
-config = {'easy': 100, 'medium': 300, 'hard': 1000, 'cost':1000}
+config = {'easy': 100, 'medium': 300, 'hard': 1000, 'cost': 1000}
 
 connection = sqlite3.connect("database.db")
 # allows return rows to be converted to dictionary
@@ -8,16 +8,20 @@ connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
 try:
     cursor.execute("CREATE TABLE leetData (easy INTEGER, medium INTEGER, hard INTEGER, used INTEGER)")
+    connection.commit()
 except sqlite3.OperationalError:
     pass
+
 
 def read():
     rows = cursor.execute("SELECT easy, medium, hard, used FROM leetData").fetchall()
     if not rows:
         # fetch and update data
-        data = {'easy': 2, 'medium': 2, 'hard': 4} # get data from api
+        fetchData = {'easy': 2, 'medium': 2, 'hard': 4}  # get data from api
         cursor.execute("INSERT INTO leetData VALUES (?, ?, ?, ?)",
-                       (data['easy'], data['medium'], data['hard'], 0))
+                       (fetchData['easy'], fetchData['medium'], fetchData['hard'], 0))
+        connection.commit()
+        return read()
     return dict(rows[0])
 
 
@@ -27,19 +31,30 @@ def update(data, used=0):
     cursor.execute(
         "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ?",
         (data['easy'], data['medium'], data['hard'], used))
+    # commit the changes
+    connection.commit()
     # take difference between each tier then add amount of points for each tier
+
+
+def set(data, used=0):
+    cursor.execute(
+        "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ?",
+        (data['easy'], data['medium'], data['hard'], used))
+    # commit the changes
+    connection.commit()
 
 
 def spend():
     rows = read()
     usable = getUsable(rows)
     if usable >= config['cost'] * 1:
-        used = config['cost'] * 1 # 1 equal to amount
+        used = config['cost'] * 1  # 1 equal to amount
         update(rows, used)
     else:
         print('not enough')
 
-def getUsable(rows = None):
+
+def getUsable(rows=None):
     if not rows:
         rows = read()
     total = (rows['easy'] * config['easy']) + \
@@ -48,7 +63,8 @@ def getUsable(rows = None):
     usable = total - rows['used']
     return usable
 
-# data = {'easy': 2, 'medium': 2, 'hard': 4}
+
+#dat = {'easy': 2, 'medium': 2, 'hard': 4}
 # data2 = {'easy': 5, 'medium': 2, 'hard': 4}
 # # initialise
 # cursor.execute(
@@ -56,7 +72,9 @@ def getUsable(rows = None):
 #     (data['easy'], data['medium'], data['hard'], 0))
 # print(f'read: ',read())
 # print(f'money start: ', getUsable())
-# update(data, 0)
+# print(f'read: ',read())
+# set(dat, 0)
+# print(f'read: ', read())
 # spend()
 # print(f'spend 1: ', getUsable())
 # spend()
