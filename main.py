@@ -7,8 +7,15 @@ import math
 import database as db
 
 # api
-# top bar show casing currency
+# top bar showcasing currency
 # database to record
+
+
+def startUp():
+    # get initial data
+    money = db.getUsable()
+    data = db.read()
+    return money, data
 
 def quit():
     for event in pygame.event.get():
@@ -27,6 +34,7 @@ splits = int(360 / num_decisions)
 velocity = initial_velocity = random.uniform(0, 2)
 decay = 0.0002 # adjust this value so that it depends on number of decisions
 
+money, data = startUp()
 
 while True:
     pygame.display.flip()
@@ -43,8 +51,6 @@ while True:
     pygame.draw.circle(screen, (0, 0, 0), (200, 200), 200, 3)
     text = pygame.Surface((200,200))
     text.fill((0,0,0))
-    money = db.getUsable()
-    print(db.read())
     score = font.render("Score: "+str(money), False, (255, 0, 0))
     screen.blit(text, (500, 300))
     screen.blit(score, (500,300))
