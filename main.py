@@ -5,6 +5,7 @@ import sys
 import random
 import math
 import database as db
+import ui
 
 # api
 # top bar showcasing currency
@@ -23,7 +24,6 @@ def quit():
             pygame.quit()
             sys.exit()
 
-
 pygame.init()  # Initializing pygame
 font = pygame.font.SysFont(None, 28)
 screen = pygame.display.set_mode((800, 800))
@@ -35,6 +35,9 @@ velocity = initial_velocity = random.uniform(0, 2)
 decay = 0.0002 # adjust this value so that it depends on number of decisions
 
 money, data = startUp()
+buttons = []
+refreshButton = ui.Button(screen,500,280,100,20,font,"Refresh",ui.buttonAction)
+buttons.append(refreshButton)
 
 while True:
     pygame.display.flip()
@@ -55,10 +58,16 @@ while True:
     screen.blit(text, (500, 300))
     screen.blit(score, (500,300))
 
+    # render buttons
+    for button in buttons:
+        button.process()
+
+    # render separation line on chart
     for i in range(num_decisions):
         # draw separation line for each choice
         gfxdraw.pie(screen, 200, 200, 200, i * splits, splits, (0, 0, 0))
 
+    # render decision text
     for i in range(0, num_decisions):
         # for each decision place the corresponding text on screen
         textChoice = font.render(decisions[i], False, (0, 0, 0))
@@ -69,14 +78,15 @@ while True:
         textChoice = pygame.transform.rotate(textChoice, (i - (2 * i)) * (360 / (num_decisions * 2)))
         textWidth = textChoice.get_rect().width
         textHeight = textChoice.get_rect().height
+        # (200 - 100) controls how close  text is to center, 0 = very close, >100 = away
         screen.blit(textChoice, (
             (200 - (textWidth / 2))
             + ((200 - 100) * math.cos(((i * (360 / (num_decisions * 2)))) * (math.pi/180))),
             (200 - (textHeight / 2))
             + ((200 - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi/180)))
-        )
-                    )
+        ))
         textChoice = ''
+
     oldCenter = blittedRect.center  # Find old center of spinner
 
     rotatedSurf = pygame.transform.rotate(plate, degree)  # Rotate spinner by degree (0 at first)
