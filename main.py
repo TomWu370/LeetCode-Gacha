@@ -47,8 +47,7 @@ def renderButtons(buttons):
 def displayresult(result, font, screen):
     textsurface = font.render(result, True, (0, 255, 0))
     textrect = textsurface.get_rect()
-    textrect.centerx = screen.get_rect().centerx
-    textrect.centery = screen.get_rect().centery
+    textrect.center = screen.get_rect().center
     screen.blit(textsurface, textrect)
     pygame.display.update()
 
@@ -62,26 +61,23 @@ degree = 0  # starting wheel degree
 num_decisions = len(decisions)
 splits = int(360 / num_decisions)
 velocity = initial_velocity = random.uniform(0, 2)
-decay = 0.0012  # adjust this value so that it depends on number of decisions, 0.0002
+decay = 0.00002  # adjust this value so that it depends on number of decisions, 0.0002
 
 money, data = startUp()
 buttons = []
-refreshButton = ui.Button(screen, 500, 280, 100, 20, font, "Refresh", ui.buttonAction)
-buttons.append(refreshButton)
+refreshButton = ui.RectangleButton(screen, 500, 280, 100, 20, font, "Refresh", ui.buttonAction)
+startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, ui.buttonAction)
+buttons.extend([refreshButton, startButton])
 
 state = MAIN
 while state == MAIN:
     pygame.display.update()
-    screen.fill([255, 255, 255])  # Fill with white
 
-    plate = pygame.Surface((100, 100))  # Creating surface for the spinner
-    plate.fill((50, 50, 150))  # White fill for the surface
-    plate.set_colorkey((255, 255, 255))  # Colorkey out the white fill
-    plate = pygame.image.load('pointer.png')#.convert_alpha()  # Use convert_alpha to preserve transparency
+    pointer = pygame.image.load('pointer.png').convert_alpha()  # Use convert_alpha to preserve transparency
     pointerPos = 180, 10  # Put it in the middle
-    blittedRect = screen.blit(plate, pointerPos)  # Put the spinner on the screen
+    blittedRect = screen.blit(pointer, pointerPos)  # Put the spinner on the screen
+    screen.fill((255, 255, 255))  # Fill with white
 
-    screen.fill([255, 255, 255])  # Re-draw screen
     pygame.draw.circle(screen, (150, 50, 0), (200, 200), 200, 3)
     text = pygame.Surface((200, 200))
     text.fill((125, 255, 255))
@@ -119,7 +115,7 @@ while state == MAIN:
 
     oldCenter = blittedRect.center  # Find old center of spinner
 
-    rotatedSurf = pygame.transform.rotate(plate, degree)  # Rotate spinner by degree (0 at first)
+    rotatedSurf = pygame.transform.rotate(pointer, degree)  # Rotate spinner by degree (0 at first)
 
     rotRect = rotatedSurf.get_rect()  # Get dimensions of rotated spinner
     rotRect.center = oldCenter  # Assign center of rotated spinner to center of pre-rotated
@@ -161,16 +157,16 @@ while state == MAIN:
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 # click on plate area
-                if plate.get_rect().collidepoint(event.pos):
+                if pointer.get_rect().collidepoint(event.pos):
                     # Left mouse button. collide with area
                     # Check if the rect collides with the mouse pos.
                     print('Area clicked.')
                     print(event.pos)
-                    # print(plate.get_rect())
-                    # image = pygame.Surface(plate.get_size())
-                    # image.fill((0,0,0), plate.get_rect())
-                    # screen.blit(image, (0,0))
-                    # pygame.display.update()
+                    print(pointer.get_rect())
+                    image = pygame.Surface(pointer.get_size())
+                    image.fill((0,0,0), pointer.get_rect())
+                    screen.blit(image, (0,0))
+                    pygame.display.update()
                     state = MAIN
                     velocity = random.uniform(0, 1.5)
                     break
