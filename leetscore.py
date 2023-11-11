@@ -1,12 +1,17 @@
+import configparser
 import leetcode
 import database
+
 
 DIFFICULTY = {1: 'Easy',
               2: 'Medium',
               3: 'Hard'}
 
-leetcode_session = ""  # "yyy"
-csrf_token = ""  # "xxx"
+config = configparser.ConfigParser()
+config.read("config.ini")
+config = config['DEFAULT']
+leetcode_session = config['session_cookie']
+csrf_token = config['csrf_token']
 
 configuration = leetcode.Configuration()
 
