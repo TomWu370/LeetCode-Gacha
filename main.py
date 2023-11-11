@@ -58,24 +58,23 @@ font = pygame.font.SysFont(None, 28)
 screen = pygame.display.set_mode((800, 800))
 
 decisions = ['choice1', 'choice2']
-degree = 0  # starting wheel degree
 num_decisions = len(decisions)
 splits = int(360 / num_decisions)
-velocity = initial_velocity = random.uniform(0, 2)
-decay = 0.0002  # adjust this value so that it depends on number of decisions, 0.0002
 
-pointer = Spinner(screen, 2, 2)
+spinnerPos = (180, 10)
+spinner = Spinner(screen, spinnerPos, 2, 2)
 
 money, data = startUp()
-buttons = []
+
 refreshButton = ui.RectangleButton(screen, 500, 280, 100, 20, font, "Refresh", ui.buttonAction)
-startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, Spinner.respin, pointer)
-buttons.extend([refreshButton, startButton])
+startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, Spinner.respin, spinner)
+buttons = ui.Button.getList()
+
 
 state = MAIN
 while state == MAIN:
     pygame.display.update()
-    pointer.drawSpinner()
+    spinner.drawSpinner() # needed to redraw each frame due to white filling, otherwise will have artifacts
     pygame.draw.circle(screen, (150, 50, 0), (200, 200), 200, 3)
     text = pygame.Surface((200, 200))
     text.fill((125, 255, 255))
@@ -94,12 +93,10 @@ while state == MAIN:
     # render decision text
     for i in range(0, num_decisions):
         # for each decision place the corresponding text on screen
-        textChoice = font.render(decisions[i], False, (0, 0, 0))
-        textWidth = textChoice.get_rect().width
-        textHeight = textChoice.get_rect().height
+        text = font.render(decisions[i], False, (0, 0, 0))
         i += i + 1
 
-        textChoice = pygame.transform.rotate(textChoice, (i - (2 * i)) * (360 / (num_decisions * 2)))
+        textChoice = pygame.transform.rotate(text, (i - (2 * i)) * (360 / (num_decisions * 2)))
         textWidth = textChoice.get_rect().width
         textHeight = textChoice.get_rect().height
         # (200 - 100) controls how close  text is to center, 0 = very close, >100 = away
@@ -109,17 +106,17 @@ while state == MAIN:
             (200 - (textHeight / 2))
             + ((200 - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi / 180)))
         ))
-        textChoice = ''
-    pointer.rotateSpinner()
 
-    if pointer.isStop():
+
+    spinner.rotateSpinner()
+    if spinner.isStop():
         # announce result
         state = RESULT # change screen
 
     while state == RESULT:
         renderButtons(buttons)
         processEvents()
-        degree = pointer.getDegree()
+        degree = spinner.getDegree()
         for i in range(num_decisions):
             # if degree within range then announce result
             if i * (360 / num_decisions) < degree < (i + 1) * (360 / num_decisions):
@@ -132,29 +129,18 @@ while state == MAIN:
             elif degree % (360 / num_decisions) == 0:
                 displayresult('Spinning Again', font, screen)
                 print('on the line')
-
+                spinner.respin()
                 state = MAIN
-                velocity = random.uniform(0, 1.5)
                 break
 
     while state == RETRY:
         renderButtons(buttons)
-        if pointer.velocity > 0:
+        if spinner.velocity > 0:
             # button for respin is pressed so velocity changed, therefore change state
             state = MAIN
             break
 
         for event in getEvents():
-
-            # if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            #     # click on plate area
-            #     if pointer.get_rect().collidepoint(event.pos):
-            #         # Left mouse button. collide with area
-            #         # Check if the rect collides with the mouse pos.
-            #         print('Area clicked.')
-            #         print(event.pos)
-            #         print(pointer.get_rect())
-            #         break
             quit(event)
 
     processEvents()
@@ -164,3 +150,16 @@ while state == MAIN:
 # 2) Add leetcode integration and database for currency
 # 3) Add respin logic
 # 4) when spinning disable respin
+
+
+# helpful snippets
+# collision detection:
+# if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+#     # click on plate area
+#     if pointer.get_rect().collidepoint(event.pos):
+#         # Left mouse button. collide with area
+#         # Check if the rect collides with the mouse pos.
+#         print('Area clicked.')
+#         print(event.pos)
+#         print(pointer.get_rect())
+#         break

@@ -1,25 +1,25 @@
 import random
 import pygame
 class Spinner():
-    def __init__(self, screen, max_velocity, min_velocity=0, decay=0.002, starting_degree=0):
+    def __init__(self, screen, pointer_pos, max_velocity, min_velocity=0, decay=0.002, starting_degree=0):
         self.screen = screen
+        self.pointer_pos = pointer_pos  # Put it in the middle
         self.max_velocity = max_velocity
         self.min_velocity = min_velocity
         self.velocity = random.uniform(min_velocity, max_velocity)
         self.decay = decay # adjust this value so that it depends on number of decisions, 0.0002
         self.degree = starting_degree  # starting wheel degree
         self.pointer = None
-        self.blittedRect = None
+        self.blitted_rect = None
 
     def drawSpinner(self):
         self.pointer = pygame.image.load('pointer.png').convert_alpha()  # Use convert_alpha to preserve transparency
-        pointerPos = (180, 10)  # Put it in the middle
-        self.blittedRect = self.screen.blit(self.pointer, pointerPos)  # Put the spinner on the screen
+        self.blitted_rect = self.screen.blit(self.pointer, self.pointer_pos)  # Put the spinner on the screen
         self.screen.fill((255, 255, 255))  # Fill with white
 
     def rotateSpinner(self):
         try:
-            oldCenter = self.blittedRect.center  # Find old center of spinner
+            oldCenter = self.blitted_rect.center  # Find old center of spinner
             rotatedSurf = pygame.transform.rotate(self.pointer, self.degree)  # Rotate spinner by degree (0 at first)
 
             rotRect = rotatedSurf.get_rect()  # Get dimensions of rotated spinner

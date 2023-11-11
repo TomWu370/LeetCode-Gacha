@@ -5,14 +5,20 @@ from pygame.draw import circle
 
 
 class Button(ABC):
+    buttons = []
     @abstractmethod
     def __init__(self):
-        pass
+        Button.buttons.append(self)
     @abstractmethod
     def process(self):
         pass
+
+    @classmethod
+    def getList(cls):
+        return cls.buttons
 class RectangleButton(Button):
     def __init__(self, screen, x, y, width, height, font, buttonText=None, onclickFunction=None, functionArgument=None, onePress=False):
+        super().__init__()
         self.screen = screen
         self.x = x
         self.y = y
@@ -63,6 +69,7 @@ class RectangleButton(Button):
 
 class CircleButton(Button):
     def __init__(self, screen, x, y, radius, width, font, onclickFunction=None, functionArgument=None, onePress=False):
+        super().__init__()
         self.screen = screen
         self.center = (x, y)
         self.radius = radius
