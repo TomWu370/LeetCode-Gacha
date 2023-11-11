@@ -12,13 +12,14 @@ class Button(ABC):
     def process(self):
         pass
 class RectangleButton(Button):
-    def __init__(self, screen, x, y, width, height, font, buttonText=None, onclickFunction=None, onePress=False):
+    def __init__(self, screen, x, y, width, height, font, buttonText=None, onclickFunction=None, functionArgument=None, onePress=False):
         self.screen = screen
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.onclickFunction = onclickFunction
+        self.functionArgument = functionArgument
         self.onePress = onePress
         self.alreadyPressed = False
 
@@ -48,10 +49,10 @@ class RectangleButton(Button):
                 self.buttonSurface.fill(self.fillColors['pressed'])
 
                 if self.onePress:
-                    self.onclickFunction()
+                    self.onclickFunction(self.functionArgument)
 
                 elif not self.alreadyPressed:
-                    self.onclickFunction()
+                    self.onclickFunction(self.functionArgument)
                     self.alreadyPressed = True
 
         self.buttonSurface.blit(self.buttonSurf, [
@@ -61,12 +62,14 @@ class RectangleButton(Button):
         self.screen.blit(self.buttonSurface, self.buttonDim)
 
 class CircleButton(Button):
-    def __init__(self, screen, x, y, radius, width, font, onclickFunction=None, onePress=False):
+    def __init__(self, screen, x, y, radius, width, font, onclickFunction=None, functionArgument=None, onePress=False):
         self.screen = screen
         self.center = (x, y)
         self.radius = radius
         self.width = width
+        self.font = font
         self.onclickFunction = onclickFunction
+        self.functionArgument = functionArgument
         self.onePress = onePress
         self.alreadyPressed = False
 
@@ -91,11 +94,11 @@ class CircleButton(Button):
             else:
                 self.buttonDim = circle(self.screen, self.fillColors['pressed'], self.center, self.radius, self.width)
                 if self.onePress:
-                    self.onclickFunction()
+                    self.onclickFunction(self.functionArgument)
                 elif not self.alreadyPressed:
-                    self.onclickFunction()
+                    self.onclickFunction(self.functionArgument)
                     self.alreadyPressed = True
 
 
-def buttonAction():
+def buttonAction(*args):
     print("pressed")

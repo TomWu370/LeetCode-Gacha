@@ -6,6 +6,7 @@ import random
 import math
 import database as db
 import ui
+from spinner import Spinner
 
 # api
 # top bar showcasing currency
@@ -61,23 +62,20 @@ degree = 0  # starting wheel degree
 num_decisions = len(decisions)
 splits = int(360 / num_decisions)
 velocity = initial_velocity = random.uniform(0, 2)
-decay = 0.00002  # adjust this value so that it depends on number of decisions, 0.0002
+decay = 0.0002  # adjust this value so that it depends on number of decisions, 0.0002
+
+pointer = Spinner(screen, 2, 2)
 
 money, data = startUp()
 buttons = []
 refreshButton = ui.RectangleButton(screen, 500, 280, 100, 20, font, "Refresh", ui.buttonAction)
-startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, ui.buttonAction)
+startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, Spinner.respin, pointer)
 buttons.extend([refreshButton, startButton])
 
 state = MAIN
 while state == MAIN:
     pygame.display.update()
-
-    pointer = pygame.image.load('pointer.png').convert_alpha()  # Use convert_alpha to preserve transparency
-    pointerPos = 180, 10  # Put it in the middle
-    blittedRect = screen.blit(pointer, pointerPos)  # Put the spinner on the screen
-    screen.fill((255, 255, 255))  # Fill with white
-
+    pointer.drawSpinner()
     pygame.draw.circle(screen, (150, 50, 0), (200, 200), 200, 3)
     text = pygame.Surface((200, 200))
     text.fill((125, 255, 255))
@@ -112,27 +110,16 @@ while state == MAIN:
             + ((200 - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi / 180)))
         ))
         textChoice = ''
+    pointer.rotateSpinner()
 
-    oldCenter = blittedRect.center  # Find old center of spinner
-
-    rotatedSurf = pygame.transform.rotate(pointer, degree)  # Rotate spinner by degree (0 at first)
-
-    rotRect = rotatedSurf.get_rect()  # Get dimensions of rotated spinner
-    rotRect.center = oldCenter  # Assign center of rotated spinner to center of pre-rotated
-
-    screen.blit(rotatedSurf, rotRect)  # Put the rotated spinner on screen
-
-    if velocity > 0:
-        degree = (degree - velocity) % 360  # decrease angle by velocity
-        velocity -= decay
-    else:
-        velocity = 0
+    if pointer.isStop():
         # announce result
-        state = RESULT  # change screen
-        screen.blit(rotatedSurf, rotRect)  # Draw the stopped spinner
+        state = RESULT # change screen
+
     while state == RESULT:
         renderButtons(buttons)
         processEvents()
+        degree = pointer.getDegree()
         for i in range(num_decisions):
             # if degree within range then announce result
             if i * (360 / num_decisions) < degree < (i + 1) * (360 / num_decisions):
@@ -152,24 +139,22 @@ while state == MAIN:
 
     while state == RETRY:
         renderButtons(buttons)
+        if pointer.velocity > 0:
+            # button for respin is pressed so velocity changed, therefore change state
+            state = MAIN
+            break
 
         for event in getEvents():
 
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                # click on plate area
-                if pointer.get_rect().collidepoint(event.pos):
-                    # Left mouse button. collide with area
-                    # Check if the rect collides with the mouse pos.
-                    print('Area clicked.')
-                    print(event.pos)
-                    print(pointer.get_rect())
-                    image = pygame.Surface(pointer.get_size())
-                    image.fill((0,0,0), pointer.get_rect())
-                    screen.blit(image, (0,0))
-                    pygame.display.update()
-                    state = MAIN
-                    velocity = random.uniform(0, 1.5)
-                    break
+            # if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            #     # click on plate area
+            #     if pointer.get_rect().collidepoint(event.pos):
+            #         # Left mouse button. collide with area
+            #         # Check if the rect collides with the mouse pos.
+            #         print('Area clicked.')
+            #         print(event.pos)
+            #         print(pointer.get_rect())
+            #         break
             quit(event)
 
     processEvents()
