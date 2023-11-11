@@ -1,8 +1,6 @@
 import pygame
 from pygame import gfxdraw
-import time
 import sys
-import random
 import math
 import database as db
 import ui
@@ -75,14 +73,14 @@ buttons = ui.Button.getList()
 state = MAIN
 while state == MAIN:
     pygame.display.update()
-    spinner.drawSpinner() # needed to redraw each frame due to white filling, otherwise will have artifacts
+    screen.fill((255, 255, 255))  # Fill 'screen' with white
     pygame.draw.circle(screen, (150, 50, 0), (200, 200), 200, 3)
     text = pygame.Surface((200, 200))
     text.fill((125, 255, 255))
     score = font.render("Score: " + str(money), False, (200, 0, 50))
     screen.blit(text, (500, 300))
     screen.blit(score, (500, 300))
-
+    print(spinner.velocity)
     # render buttons
     renderButtons(buttons)
 
@@ -108,18 +106,19 @@ while state == MAIN:
             + ((200 - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi / 180)))
         ))
 
+    spinner.drawSpinner()  # update spinner with current degree
+
     if spinner.velocity > 0:
         SPIN = True
-        spinner.rotateSpinner()
     if spinner.isStop() and SPIN:
         # announce result
         SPIN = False
-        state = RESULT # change screen
-
+        state = RESULT  # change screen
 
     while state == RESULT:
         renderButtons(buttons)
         processEvents()
+        spinner.drawSpinner()  # draw spinner after button rendered to avoid buttons appearing on top
         degree = spinner.getDegree()
         for i in range(num_decisions):
             # if degree within range then announce result
@@ -139,6 +138,7 @@ while state == MAIN:
 
     while state == RETRY:
         renderButtons(buttons)
+        spinner.drawSpinner()
         if spinner.velocity > 0:
             # button for respin is pressed so velocity changed, therefore change state
             state = MAIN

@@ -10,26 +10,14 @@ class Spinner():
         self.velocity = 0
         self.decay = decay # adjust this value so that it depends on number of decisions, 0.0002
         self.degree = starting_degree  # starting wheel degree
-        self.blitted_rect = None
+        self.spinner_rect = self.screen.blit(self.pointer, self.pointer_pos)
+
 
     def drawSpinner(self):
-        self.screen.fill((255, 255, 255))  # Fill with white
-        self.blitted_rect = self.screen.blit(self.pointer, self.pointer_pos)  # Put the spinner on the screen
-        self.screen.blit(self.pointer, self.blitted_rect)
-
-
-    def rotateSpinner(self):
-        try:
-            oldCenter = self.blitted_rect.center  # Find old center of spinner
-            rotatedSurf = pygame.transform.rotate(self.pointer, self.degree)  # Rotate spinner by degree (0 at first)
-
-            rotRect = rotatedSurf.get_rect()  # Get dimensions of rotated spinner
-            rotRect.center = oldCenter  # Assign center of rotated spinner to center of pre-rotated
-
+            rotatedSurf = pygame.transform.rotate(self.pointer, self.degree)  # Rotate spinner by degree (0 by default)
+            rotRect = rotatedSurf.get_rect(center=self.spinner_rect.center)  # Get dimensions of rotated spinner
             self.screen.blit(rotatedSurf, rotRect)  # Put the rotated spinner on screen
-        except AttributeError:
-            self.drawSpinner()
-            self.rotateSpinner()
+
 
     def isStop(self):
         if self.velocity > 0:
