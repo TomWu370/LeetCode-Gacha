@@ -16,6 +16,7 @@ from spinner import Spinner
 MAIN = 0
 RESULT = 1
 RETRY = 2
+SPIN = False
 
 
 def startUp():
@@ -62,12 +63,12 @@ num_decisions = len(decisions)
 splits = int(360 / num_decisions)
 
 spinnerPos = (180, 10)
-spinner = Spinner(screen, spinnerPos, 2, 2)
+spinner = Spinner(screen, "pointer.png", spinnerPos, 2, 2)
 
 money, data = startUp()
 
 refreshButton = ui.RectangleButton(screen, 500, 280, 100, 20, font, "Refresh", ui.buttonAction)
-startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, Spinner.respin, spinner)
+startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, Spinner.spin, spinner)
 buttons = ui.Button.getList()
 
 
@@ -107,11 +108,14 @@ while state == MAIN:
             + ((200 - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi / 180)))
         ))
 
-
-    spinner.rotateSpinner()
-    if spinner.isStop():
+    if spinner.velocity > 0:
+        SPIN = True
+        spinner.rotateSpinner()
+    if spinner.isStop() and SPIN:
         # announce result
+        SPIN = False
         state = RESULT # change screen
+
 
     while state == RESULT:
         renderButtons(buttons)
@@ -129,7 +133,7 @@ while state == MAIN:
             elif degree % (360 / num_decisions) == 0:
                 displayresult('Spinning Again', font, screen)
                 print('on the line')
-                spinner.respin()
+                spinner.spin()
                 state = MAIN
                 break
 
