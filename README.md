@@ -8,7 +8,3 @@ To use:
 1) Update the config.ini with your LeetCode session cookies
 2) Update rates.ini to change your roulette rates and values
 3) Run start.py
-
-
-
-Inspired by and improved version of https://github.com/ltisz/DecisionWheel.git
