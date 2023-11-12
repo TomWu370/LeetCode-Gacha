@@ -5,16 +5,11 @@ import math
 import database as db
 import ui
 from spinner import Spinner
+from states import States
 
 # api
 # top bar showcasing currency
 # database to record
-
-# STATES
-MAIN = 0
-RESULT = 1
-RETRY = 2
-SPIN = False
 
 
 def startUp():
@@ -23,12 +18,15 @@ def startUp():
     data = db.read()
     return money, data
 
+
 def getEvents():
     return pygame.event.get()
+
 
 def processEvents():
     for event in getEvents():
         quit(event)
+
 
 def quit(action):
     # temporary code reduction, before utilising partial screen refresh
@@ -69,9 +67,8 @@ refreshButton = ui.RectangleButton(screen, 500, 280, 100, 20, font, "Refresh", u
 startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, Spinner.spin, spinner)
 buttons = ui.Button.getList()
 
-
-state = MAIN
-while state == MAIN:
+state = States.MAIN
+while True:
     pygame.display.update()
     screen.fill((255, 255, 255))  # Fill 'screen' with white
     pygame.draw.circle(screen, (150, 50, 0), (200, 200), 200, 3)
@@ -80,7 +77,7 @@ while state == MAIN:
     score = font.render("Score: " + str(money), False, (200, 0, 50))
     screen.blit(text, (500, 300))
     screen.blit(score, (500, 300))
-    print(spinner.velocity)
+
     # render buttons
     renderButtons(buttons)
 
@@ -108,62 +105,50 @@ while state == MAIN:
 
     spinner.drawSpinner()  # update spinner with current degree
 
-    if spinner.velocity > 0:
-        SPIN = True
-    if spinner.isStop() and SPIN:
-        # announce result
-        SPIN = False
-        state = RESULT  # change screen
+    if state == States.SPIN:
+        spinner.rotateSpinner()
+        if spinner.isStop():
+            # announce result
+            #state = RESULT  # change screen
+            state = States.RESULT
 
-    while state == RESULT:
-        renderButtons(buttons)
-        processEvents()
-        spinner.drawSpinner()  # draw spinner after button rendered to avoid buttons appearing on top
+    if state == States.RESULT:
         degree = spinner.getDegree()
         for i in range(num_decisions):
             # if degree within range then announce result
             if i * (360 / num_decisions) < degree < (i + 1) * (360 / num_decisions):
-                state = RETRY
                 print(f'i:', i)
                 result = decisions[i]
                 displayresult(result, font, screen)
+                state = States.MAIN
                 break
 
             elif degree % (360 / num_decisions) == 0:
                 displayresult('Spinning Again', font, screen)
                 print('on the line')
                 spinner.spin()
-                state = MAIN
+                state = States.SPIN
                 break
-
-    while state == RETRY:
-        renderButtons(buttons)
-        spinner.drawSpinner()
-        if spinner.velocity > 0:
-            # button for respin is pressed so velocity changed, therefore change state
-            state = MAIN
-            break
-
-        for event in getEvents():
-            quit(event)
 
     processEvents()
 
 # To Do:
-# 1) Update pointer.png to include button
-# 2) Add leetcode integration and database for currency
-# 3) Add respin logic
-# 4) when spinning disable respin
+# 1) Update pointer.png to include button O
+# 2) Add leetcode integration and database for currency O
+# 3) Add respin logic O
+# 4) when spinning disable respin O
 
 
 # helpful snippets
 # collision detection:
-# if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-#     # click on plate area
-#     if pointer.get_rect().collidepoint(event.pos):
-#         # Left mouse button. collide with area
-#         # Check if the rect collides with the mouse pos.
-#         print('Area clicked.')
-#         print(event.pos)
-#         print(pointer.get_rect())
-#         break
+# for event in getEvents():
+#     quit(event)
+#     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+#         # click on plate area
+#         if pointer.get_rect().collidepoint(event.pos):
+#             # Left mouse button. collide with area
+#             # Check if the rect collides with the mouse pos.
+#             print('Area clicked.')
+#             print(event.pos)
+#             print(pointer.get_rect())
+#             break
