@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import pygame
 from pygame import Vector2 as V
 from pygame.draw import circle
+from states import States
 
 
 class Button(ABC):
@@ -77,6 +78,9 @@ class CircleButton(Button):
         self.font = font
         self.onclickFunction = onclickFunction
         self.functionArgument = functionArgument
+        # specialised for Retry button
+        self.spinner = functionArgument[0]
+        self.state = functionArgument[1]
         self.onePress = onePress
         self.alreadyPressed = False
 
@@ -101,9 +105,12 @@ class CircleButton(Button):
             else:
                 self.buttonDim = circle(self.screen, self.fillColors['pressed'], self.center, self.radius, self.width)
                 if self.onePress:
-                    self.onclickFunction(self.functionArgument)
+                    self.onclickFunction(self.spinner)
+                    self.state.setState(States.SPIN)
+
                 elif not self.alreadyPressed:
-                    self.onclickFunction(self.functionArgument)
+                    self.onclickFunction(self.spinner)
+                    self.state.setState(States.SPIN)
                     self.alreadyPressed = True
 
 

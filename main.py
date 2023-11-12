@@ -5,7 +5,7 @@ import math
 import database as db
 import ui
 from spinner import Spinner
-from states import States
+from states import States, State
 
 # api
 # top bar showcasing currency
@@ -53,6 +53,7 @@ def displayresult(result, font, screen):
 pygame.init()  # Initializing pygame
 font = pygame.font.SysFont(None, 28)
 screen = pygame.display.set_mode((800, 800))
+state = State()
 
 decisions = ['choice1', 'choice2']
 num_decisions = len(decisions)
@@ -64,10 +65,9 @@ spinner = Spinner(screen, "pointer.png", spinnerPos, 2, 2)
 money, data = startUp()
 
 refreshButton = ui.RectangleButton(screen, 500, 280, 100, 20, font, "Refresh", ui.buttonAction)
-startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, Spinner.spin, spinner)
+startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, Spinner.spin, [spinner, state])
 buttons = ui.Button.getList()
 
-state = States.MAIN
 while True:
     pygame.display.update()
     screen.fill((255, 255, 255))  # Fill 'screen' with white
@@ -105,14 +105,14 @@ while True:
 
     spinner.drawSpinner()  # update spinner with current degree
 
-    if state == States.SPIN:
+    if state.isState(States.SPIN):
         spinner.rotateSpinner()
         if spinner.isStop():
             # announce result
             #state = RESULT  # change screen
-            state = States.RESULT
+            state.setState(States.RESULT)
 
-    if state == States.RESULT:
+    if state.isState(States.RESULT):
         degree = spinner.getDegree()
         for i in range(num_decisions):
             # if degree within range then announce result
@@ -120,14 +120,14 @@ while True:
                 print(f'i:', i)
                 result = decisions[i]
                 displayresult(result, font, screen)
-                state = States.MAIN
+                state.setState(States.MAIN)
                 break
 
             elif degree % (360 / num_decisions) == 0:
                 displayresult('Spinning Again', font, screen)
                 print('on the line')
                 spinner.spin()
-                state = States.SPIN
+                state.setState(States.SPIN)
                 break
 
     processEvents()
