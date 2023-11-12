@@ -5,6 +5,6 @@ This program will be using the Python LeetCode client API https://github.com/fsp
 The purpose of this program is to encourage users to complete more questions via custom set prizes for the gacha roulette wheel.
 
 To use:
-1) Update the config.ini with your LeetCode session cookies
+1) Update the config.ini with your LeetCode session cookies and desired reward for each question difficulty
 2) Update rates.ini to change your roulette rates and values
 3) Run start.py
