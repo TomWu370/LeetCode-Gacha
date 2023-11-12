@@ -1,25 +1,29 @@
 import sqlite3
+import leetscore
+from configparser import SafeConfigParser
 
-config = {'easy': 100, 'medium': 300, 'hard': 1000, 'cost': 1000}
+reward_config = SafeConfigParser()
+reward_config.read("config.ini")
+reward_config = reward_config['WHEEL_DEFAULT']
 
 connection = sqlite3.connect("database.db")
 # allows return rows to be converted to dictionary
 connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
 try:
-    cursor.execute("CREATE TABLE leetData (easy INTEGER, medium INTEGER, hard INTEGER, used INTEGER)")
+    cursor.execute("CREATE TABLE leetData (username VARCHAR, easy INTEGER, medium INTEGER, hard INTEGER, used INTEGER)")
     connection.commit()
 except sqlite3.OperationalError:
     pass
 
-
+USER = str(leetscore.getUsername())
 def read():
-    rows = cursor.execute("SELECT easy, medium, hard, used FROM leetData").fetchall()
+    rows = cursor.execute("SELECT easy, medium, hard, used FROM leetData WHERE username = ?", (USER,)).fetchall()
     if not rows:
         # fetch and update data
-        fetchData = {'easy': 2, 'medium': 2, 'hard': 4}  # get data from api
-        cursor.execute("INSERT INTO leetData VALUES (?, ?, ?, ?)",
-                       (fetchData['easy'], fetchData['medium'], fetchData['hard'], 0))
+        fetchData = leetscore.getQuestions()  # get data from api
+        cursor.execute("INSERT INTO leetData VALUES (?, ?, ?, ?, ?)",
+                       (USER, fetchData['easy'], fetchData['medium'], fetchData['hard'], 0))
         connection.commit()
         return read()
     return dict(rows[0])
@@ -29,8 +33,8 @@ def update(data, used=0):
     rows = read()
     used += rows['used']
     cursor.execute(
-        "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ?",
-        (data['easy'], data['medium'], data['hard'], used))
+        "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ? WHERE username = ?",
+        (USER, data['easy'], data['medium'], data['hard'], used))
     # commit the changes
     connection.commit()
     # take difference between each tier then add amount of points for each tier
@@ -38,8 +42,8 @@ def update(data, used=0):
 
 def set(data, used=0):
     cursor.execute(
-        "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ?",
-        (data['easy'], data['medium'], data['hard'], used))
+        "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ? WHERE username = ?",
+        (USER, data['easy'], data['medium'], data['hard'], used))
     # commit the changes
     connection.commit()
 
@@ -47,8 +51,8 @@ def set(data, used=0):
 def spend():
     rows = read()
     usable = getUsable(rows)
-    if usable >= config['cost'] * 1:
-        used = config['cost'] * 1  # 1 equal to amount
+    if usable >= reward_config['cost'] * 1:
+        used = reward_config['cost'] * 1  # 1 equal to amount
         update(rows, used)
     else:
         print('not enough')
@@ -57,9 +61,9 @@ def spend():
 def getUsable(rows=None):
     if not rows:
         rows = read()
-    total = (rows['easy'] * config['easy']) + \
-            (rows['medium'] * config['medium']) + \
-            (rows['hard'] * config['hard'])
+    total = (rows['easy'] * reward_config['easy_point']) + \
+            (rows['medium'] * reward_config['medium_point']) + \
+            (rows['hard'] * reward_config['hard_point'])
     usable = total - rows['used']
     return usable
 
@@ -70,7 +74,7 @@ def getUsable(rows=None):
 # cursor.execute(
 #     "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ?",
 #     (data['easy'], data['medium'], data['hard'], 0))
-# print(f'read: ',read())
+print(f'read: ',read())
 # print(f'money start: ', getUsable())
 # print(f'read: ',read())
 # set(dat, 0)

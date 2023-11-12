@@ -1,15 +1,15 @@
-import configparser
+from configparser import SafeConfigParser
 import leetcode
-import database
 
 
-DIFFICULTY = {1: 'Easy',
-              2: 'Medium',
-              3: 'Hard'}
+DIFFICULTY = {1: 'easy',
+              2: 'medium',
+              3: 'hard'}
 
-config = configparser.ConfigParser()
+config = SafeConfigParser()
 config.read("config.ini")
 config = config['DEFAULT']
+
 leetcode_session = config['session_cookie']
 csrf_token = config['csrf_token']
 
@@ -43,7 +43,7 @@ def getUsername():
 def getQuestions():
     # print all solved algorithm questions, fetch solved questions along with difficulty
     api_response = api_instance.api_problems_topic_get(topic="all")
-    solved_questions = {'Easy': 0, 'Medium': 0, 'Hard': 0}
+    solved_questions = {'easy': 0, 'medium': 0, 'hard': 0}
 
     for questions in api_response.stat_status_pairs:
         if questions.status == "ac":
@@ -54,4 +54,3 @@ def getQuestions():
 if __name__ == '__main__':
     print(getUsername())
     print(getQuestions())
-    print(database.read())
