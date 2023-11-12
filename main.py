@@ -78,8 +78,6 @@ while True:
     screen.blit(text, (500, 300))
     screen.blit(score, (500, 300))
 
-    # render buttons
-    renderButtons(buttons)
 
     # render separation line on chart
     for i in range(num_decisions):
@@ -103,7 +101,11 @@ while True:
             + ((200 - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi / 180)))
         ))
 
-    spinner.drawSpinner()  # update spinner with current degree
+    # render buttons
+    renderButtons(buttons)
+
+    # update spinner with current degree
+    spinner.drawSpinner()
 
     if state.isState(States.SPIN):
         spinner.rotateSpinner()
