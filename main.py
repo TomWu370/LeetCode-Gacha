@@ -107,30 +107,32 @@ while True:
     # update spinner with current degree
     spinner.drawSpinner()
 
-    if state.isState(States.SPIN):
-        spinner.rotateSpinner()
-        if spinner.isStop():
-            # announce result
-            #state = RESULT  # change screen
-            state.setState(States.RESULT)
+    match state.getState():
+        case States.SPIN:
+            spinner.rotateSpinner()
+            if spinner.isStop():
+                # announce result
+                #state = RESULT  # change screen
+                state.setState(States.RESULT)
 
-    if state.isState(States.RESULT):
-        degree = spinner.getDegree()
-        for i in range(num_decisions):
-            # if degree within range then announce result
-            if i * (360 / num_decisions) < degree < (i + 1) * (360 / num_decisions):
-                print(f'i:', i)
-                result = decisions[i]
-                displayresult(result, font, screen)
-                state.setState(States.MAIN)
-                break
+        case States.RESULT:
+            degree = spinner.getDegree()
+            for i in range(num_decisions):
+                # if degree within range then announce result
+                if i * (360 / num_decisions) < degree < (i + 1) * (360 / num_decisions):
+                    print(f'i:', i)
+                    result = decisions[i]
+                    displayresult(result, font, screen)
+                    state.setState(States.MAIN)
+                    break
 
-            elif degree % (360 / num_decisions) == 0:
-                displayresult('Spinning Again', font, screen)
-                print('on the line')
-                spinner.spin()
-                state.setState(States.SPIN)
-                break
+                elif degree % (360 / num_decisions) == 0:
+                    displayresult('Spinning Again', font, screen)
+                    print('on the line')
+                    spinner.spin()
+                    state.setState(States.SPIN)
+                    break
+
 
     processEvents()
 
