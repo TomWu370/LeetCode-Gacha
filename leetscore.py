@@ -1,4 +1,4 @@
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 import leetcode
 
 
@@ -6,7 +6,7 @@ DIFFICULTY = {1: 'easy',
               2: 'medium',
               3: 'hard'}
 
-config = SafeConfigParser()
+config = ConfigParser()
 config.read("config.ini")
 config = config['DEFAULT']
 

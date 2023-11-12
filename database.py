@@ -1,8 +1,8 @@
 import sqlite3
 import leetscore
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 
-reward_config = SafeConfigParser()
+reward_config = ConfigParser()
 reward_config.read("config.ini")
 reward_config = reward_config['WHEEL_DEFAULT']
 
@@ -16,7 +16,7 @@ try:
 except sqlite3.OperationalError:
     pass
 
-USER = str(leetscore.getUsername())
+USER = leetscore.getUsername()
 def read():
     rows = cursor.execute("SELECT easy, medium, hard, used FROM leetData WHERE username = ?", (USER,)).fetchall()
     if not rows:
@@ -74,7 +74,7 @@ def getUsable(rows=None):
 # cursor.execute(
 #     "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ?",
 #     (data['easy'], data['medium'], data['hard'], 0))
-print(f'read: ',read())
+#print(f'read: ',read())
 # print(f'money start: ', getUsable())
 # print(f'read: ',read())
 # set(dat, 0)
