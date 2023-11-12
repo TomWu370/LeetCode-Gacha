@@ -7,6 +7,7 @@ import ui
 from spinner import Spinner
 from states import States, State
 
+
 # api
 # top bar showcasing currency
 # database to record
@@ -78,7 +79,6 @@ while True:
     screen.blit(text, (500, 300))
     screen.blit(score, (500, 300))
 
-
     # render separation line on chart
     for i in range(num_decisions):
         # draw separation line for each choice
@@ -112,7 +112,7 @@ while True:
             spinner.rotateSpinner()
             if spinner.isStop():
                 # announce result
-                #state = RESULT  # change screen
+                # state = RESULT  # change screen
                 state.setState(States.RESULT)
 
         case States.RESULT:
@@ -132,7 +132,6 @@ while True:
                     spinner.spin()
                     state.setState(States.SPIN)
                     break
-
 
     processEvents()
 

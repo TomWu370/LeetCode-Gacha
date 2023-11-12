@@ -7,15 +7,16 @@ class States(Enum):
     RESULT = 1
     SPIN = 2
 
-class State():
+
+class State:
     def __init__(self):
-        self.state = States.MAIN
+        self.__state = States.MAIN
 
     def setState(self, new_state):
-        self.state = new_state
+        self.__state = new_state
 
     def getState(self):
-        return self.state
+        return self.__state
 
     def isState(self, other_state):
-        return self.state == other_state
+        return self.__state == other_state
