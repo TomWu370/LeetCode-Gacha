@@ -15,9 +15,9 @@ class Spinner:
         self.spinner_rect = self.screen.blit(self.pointer, self.pointer_pos)
 
     def drawSpinner(self):
-        rotatedSurf = pygame.transform.rotate(self.pointer, self.degree)  # Rotate spinner by degree (0 by default)
-        rotRect = rotatedSurf.get_rect(center=self.spinner_rect.center)  # Get dimensions of rotated spinner
-        self.screen.blit(rotatedSurf, rotRect)  # Put the rotated spinner on screen
+        rotated_surf = pygame.transform.rotate(self.pointer, self.degree)  # Rotate spinner by degree (0 by default)
+        rot_rect = rotated_surf.get_rect(center=self.spinner_rect.center)  # Get dimensions of rotated spinner
+        self.screen.blit(rotated_surf, rot_rect)  # Put the rotated spinner on screen
 
     def rotateSpinner(self):
         self.degree = (self.degree - self.velocity) % 360  # decrease angle by velocity
