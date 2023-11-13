@@ -53,7 +53,10 @@ def displayresult(result, font, screen):
 
 pygame.init()  # Initializing pygame
 font = pygame.font.SysFont(None, 28)
-screen = pygame.display.set_mode((800, 800))
+screen = pygame.display.set_mode((1600, 900),pygame.RESIZABLE)
+wheel_surf = pygame.Surface((500,500))
+stat_surf = pygame.Surface((500, 500))
+
 state = State()
 
 decisions = ['choice1', 'choice2']
@@ -61,28 +64,27 @@ num_decisions = len(decisions)
 splits = int(360 / num_decisions)
 
 spinnerPos = (180, 10)
-spinner = Spinner(screen, "pointer.png", spinnerPos, 2, 2)
+spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 2, 2)
 
 money, data = startUp()
 
-refreshButton = ui.RectangleButton(screen, 500, 280, 100, 20, font, "Refresh", ui.buttonAction)
-startButton = ui.CircleButton(screen, 200, 200, 20, 0, font, Spinner.spin, [spinner, state])
+refreshButton = ui.RectangleButton(stat_surf, 500, 280, 100, 20, font, "Refresh", ui.buttonAction)
+startButton = ui.CircleButton(wheel_surf, 200, 200, 20, 0, font, Spinner.spin, [spinner, state])
 buttons = ui.Button.getList()
 
 while True:
     pygame.display.update()
-    screen.fill((255, 255, 255))  # Fill 'screen' with white
-    pygame.draw.circle(screen, (150, 50, 0), (200, 200), 200, 3)
-    text = pygame.Surface((200, 200))
-    text.fill((125, 255, 255))
+    screen.fill((255,255,255))
+    wheel_surf.fill((255, 255, 255))  # Fill 'screen' with white
+    pygame.draw.circle(wheel_surf, (150, 50, 0), (200, 200), 200, 3)
+    stat_surf.fill((125, 255, 255))
     score = font.render("Score: " + str(money), False, (200, 0, 50))
-    screen.blit(text, (500, 300))
-    screen.blit(score, (500, 300))
+
 
     # render separation line on chart
     for i in range(num_decisions):
         # draw separation line for each choice
-        gfxdraw.pie(screen, 200, 200, 200, i * splits, splits, (0, 0, 0))
+        gfxdraw.pie(wheel_surf, 200, 200, 200, i * splits, splits, (0, 0, 0))
 
     # render decision text
     for i in range(0, num_decisions):
@@ -94,7 +96,7 @@ while True:
         textWidth = textChoice.get_rect().width
         textHeight = textChoice.get_rect().height
         # (200 - 100) controls how close  text is to center, 0 = very close, >100 = away
-        screen.blit(textChoice, (
+        wheel_surf.blit(textChoice, (
             (200 - (textWidth / 2))
             + ((200 - 100) * math.cos(((i * (360 / (num_decisions * 2)))) * (math.pi / 180))),
             (200 - (textHeight / 2))
@@ -132,7 +134,10 @@ while True:
                     spinner.spin()
                     state.setState(States.SPIN)
                     break
-
+    screen.blit(wheel_surf, (0,0))
+    screen.blit(stat_surf, (600, 100))
+    screen.blit(refreshButton.buttonSurface, (500,280))
+    screen.blit(score, (500, 300))
     processEvents()
 
 # To Do:
@@ -140,6 +145,14 @@ while True:
 # 2) Add leetcode integration and database for currency O
 # 3) Add respin logic O
 # 4) when spinning disable respin O
+# 5) Update ui to include values and username
+# 6) Update spinner,py to verify current currency amount before spinning, otherwise return insufficient balance
+# 7) To verify, modify database.py to return true or false, then add boolean check to spinner.py
+# 8) Modify main.py and spinner.py and ui.py to shift state changing to spinner.py spin(),
+#    then pass state object to spinner
+# 9) separate screen and stat_surf
+# firstly create a large screen, then define wheel surface and stat surface separately
+# modify rectangular button class to not create new surface but rather print on existing surface like circular button
 
 
 # helpful snippets

@@ -17,8 +17,10 @@ except sqlite3.OperationalError:
     pass
 
 USER = leetscore.getUsername()
+
+
 def read():
-    rows = cursor.execute("SELECT easy, medium, hard, used FROM leetData WHERE username = ?", (USER,)).fetchall()
+    rows = cursor.execute("SELECT username, easy, medium, hard, used FROM leetData WHERE username = ?", (USER,)).fetchall()
     if not rows:
         # fetch and update data
         fetchData = leetscore.getQuestions()  # get data from api
@@ -61,12 +63,16 @@ def spend():
 def getUsable(rows=None):
     if not rows:
         rows = read()
-    total = (rows['easy'] * reward_config['easy_point']) + \
-            (rows['medium'] * reward_config['medium_point']) + \
-            (rows['hard'] * reward_config['hard_point'])
+    total = (rows['easy'] * int(reward_config['easy_point'])) + \
+            (rows['medium'] * int(reward_config['medium_point'])) + \
+            (rows['hard'] * int(reward_config['hard_point']))
     usable = total - rows['used']
     return usable
 
+
+def refresh():
+    data = leetscore.getQuestions()
+    update(data)
 
 #dat = {'easy': 2, 'medium': 2, 'hard': 4}
 # data2 = {'easy': 5, 'medium': 2, 'hard': 4}

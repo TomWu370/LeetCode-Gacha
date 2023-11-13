@@ -22,6 +22,7 @@ class Spinner:
     def rotateSpinner(self):
         self.degree = (self.degree - self.velocity) % 360  # decrease angle by velocity
         self.velocity -= self.decay
+
     def isStop(self):
         if self.velocity > 0:
             return False

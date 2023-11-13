@@ -3,6 +3,7 @@ import pygame
 from pygame import Vector2 as V
 from pygame.draw import circle
 from states import States
+import database
 
 
 class Button(ABC):
@@ -115,4 +116,4 @@ class CircleButton(Button):
 
 
 def buttonAction(*args):
-    print("pressed")
+    print(database.read())
