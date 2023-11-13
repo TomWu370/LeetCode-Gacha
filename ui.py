@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import pygame
 from pygame import Vector2 as V
-from pygame.draw import circle
+from pygame.draw import rect, circle
 from states import States
 import database
 
@@ -19,55 +19,78 @@ class Button(ABC):
     def getList(cls):
         return cls.buttons
 class RectangleButton(Button):
-    def __init__(self, screen, x, y, width, height, font, buttonText=None, onclickFunction=None, functionArgument=None, onePress=False):
+    def __init__(self, screen, rect, width, height, font, buttonText=None, onclickFunction=None, functionArgument=None, onePress=False):
         super().__init__()
         self.screen = screen
-        self.x = x
-        self.y = y
+        self.rect = rect
         self.width = width
         self.height = height
+        self.rect.width = width
+        self.rect.height = height
         self.onclickFunction = onclickFunction
         self.functionArgument = functionArgument
         self.onePress = onePress
         self.alreadyPressed = False
 
         self.fillColors = {
-            'normal': '#ffffff',
+            'normal': '#333333',
             'hover': '#666666',
             'pressed': '#333333',
         }
 
-        self.buttonSurface = pygame.Surface((self.width, self.height))
-        self.buttonDim = pygame.Rect(self.x, self.y, self.width, self.height)
+        #self.buttonSurface = pygame.Surface((self.width, self.height))
+        #self.buttonDim = rect(self.x, self.y, self.width, self.height)
         if buttonText:
             self.buttonSurf = font.render(buttonText, True, (20, 20, 20))
 
     def process(self):
 
+        # mousePos = pygame.mouse.get_pos()
+        # self.buttonDim = rect(self.screen, self.fillColors['hover'],self.buttonDim, self.width)
+        #
+        # #self.buttonSurface.fill(self.fillColors['normal'])
+        # if self.buttonDim.collidepoint(mousePos):
+        #     #self.buttonSurface.fill(self.fillColors['hover'])
+        #     self.buttonDim = rect(self.screen, self.fillColors['hover'], self.buttonDim, self.width)
+        #
+        #     if not pygame.mouse.get_pressed()[0]:
+        #         self.alreadyPressed = False
+        #
+        #     else:
+        #         #self.buttonSurface.fill(self.fillColors['pressed'])
+        #         self.buttonDim = rect(self.screen, self.fillColors['pressed'], self.buttonDim, self.width)
+        #
+        #         if self.onePress:
+        #             self.onclickFunction(self.functionArgument)
+        #
+        #         elif not self.alreadyPressed:
+        #             self.onclickFunction(self.functionArgument)
+        #             self.alreadyPressed = True
+
         mousePos = pygame.mouse.get_pos()
-
-        self.buttonSurface.fill(self.fillColors['normal'])
-        if self.buttonDim.collidepoint(mousePos):
-            self.buttonSurface.fill(self.fillColors['hover'])
-
+        # print(self.rect)
+        self.buttonDim = rect(self.screen, self.fillColors['normal'],self.rect, 0)
+        # self.buttonDim.x = 600
+        # self.buttonDim.y = 100
+        if self.rect.collidepoint(mousePos):
+            print(self.buttonDim)
+            self.buttonDim = rect(self.screen, self.fillColors['hover'],self.rect, 0)
             if not pygame.mouse.get_pressed()[0]:
                 self.alreadyPressed = False
 
             else:
-                self.buttonSurface.fill(self.fillColors['pressed'])
-
+                self.buttonDim = rect(self.screen, self.fillColors['pressed'],self.rect, 0)
                 if self.onePress:
                     self.onclickFunction(self.functionArgument)
-
                 elif not self.alreadyPressed:
                     self.onclickFunction(self.functionArgument)
                     self.alreadyPressed = True
 
-        self.buttonSurface.blit(self.buttonSurf, [
-            self.buttonDim.width / 2 - self.buttonSurf.get_rect().width / 2,
-            self.buttonDim.height / 2 - self.buttonSurf.get_rect().height / 2
-        ])
-        self.screen.blit(self.buttonSurface, self.buttonDim)
+        # self.buttonSurface.blit(self.buttonSurf, [
+        #     self.buttonDim.width / 2 - self.buttonSurf.get_rect().width / 2,
+        #     self.buttonDim.height / 2 - self.buttonSurf.get_rect().height / 2
+        # ])
+        #self.screen.blit(self.buttonSurface, self.buttonDim)
 
 class CircleButton(Button):
     def __init__(self, screen, x, y, radius, width, font, onclickFunction=None, functionArgument=None, onePress=False):

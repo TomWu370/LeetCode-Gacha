@@ -67,8 +67,10 @@ spinnerPos = (180, 10)
 spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 2, 2)
 
 money, data = startUp()
-
-refreshButton = ui.RectangleButton(stat_surf, 500, 280, 100, 20, font, "Refresh", ui.buttonAction)
+stat_rect = stat_surf.get_rect()
+stat_rect.x, stat_rect.y = 600, 100
+stat_rect.width, stat_rect.height = 100, 20
+refreshButton = ui.RectangleButton(stat_surf, stat_surf.get_rect(),100, 20, font, "Refresh", ui.buttonAction)
 startButton = ui.CircleButton(wheel_surf, 200, 200, 20, 0, font, Spinner.spin, [spinner, state])
 buttons = ui.Button.getList()
 
@@ -136,8 +138,9 @@ while True:
                     break
     screen.blit(wheel_surf, (0,0))
     screen.blit(stat_surf, (600, 100))
-    screen.blit(refreshButton.buttonSurface, (500,280))
+    #screen.blit(refreshButton.buttonSurface, (500,280))
     screen.blit(score, (500, 300))
+    #renderButtons(buttons)
     processEvents()
 
 # To Do:
