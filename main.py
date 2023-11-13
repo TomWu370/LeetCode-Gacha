@@ -31,12 +31,11 @@ def processEvents():
 
 def quit(action):
     # temporary code reduction, before utilising partial screen refresh
-    pygame.display.update()  # Redraw screen when no argument
+    #pygame.display.update()  # Redraw screen when no argument
     # pass (start_x, start_y, width, height) to redraw portion of screen
     if action.type == pygame.QUIT:
         pygame.quit()
         sys.exit()
-
 
 def renderButtons(buttons):
     for button in buttons:
@@ -48,14 +47,17 @@ def displayresult(result, font, screen):
     textrect = textsurface.get_rect()
     textrect.center = screen.get_rect().center
     screen.blit(textsurface, textrect)
-    pygame.display.update()
 
-
+aspect = (1600, 900)
+wheel_aspect = (aspect[0]*0.7, aspect[1])
 pygame.init()  # Initializing pygame
 font = pygame.font.SysFont(None, 28)
-screen = pygame.display.set_mode((1600, 900),pygame.RESIZABLE)
-wheel_surf = pygame.Surface((500,500))
-stat_surf = pygame.Surface((500, 500))
+screen = pygame.display.set_mode(aspect, pygame.RESIZABLE)
+wheel_surf = pygame.Surface(wheel_aspect)
+stat_surf = pygame.Surface(aspect)
+
+# stat shift = wheel sizze
+# stat surf size = wheel_surf x times
 
 state = State()
 
@@ -63,23 +65,23 @@ decisions = ['choice1', 'choice2']
 num_decisions = len(decisions)
 splits = int(360 / num_decisions)
 
-spinnerPos = (180, 10)
+spinnerPos = (180, 0)
 spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 2, 2)
 
 money, data = startUp()
-stat_rect = stat_surf.get_rect()
-stat_rect.x, stat_rect.y = 600, 100
-stat_rect.width, stat_rect.height = 100, 20
-refreshButton = ui.RectangleButton(stat_surf, stat_surf.get_rect(),100, 20, font, "Refresh", ui.buttonAction)
+
+refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0],0,100, 20, font, "Refresh", ui.buttonAction)
 startButton = ui.CircleButton(wheel_surf, 200, 200, 20, 0, font, Spinner.spin, [spinner, state])
 buttons = ui.Button.getList()
 
 while True:
     pygame.display.update()
-    screen.fill((255,255,255))
-    wheel_surf.fill((255, 255, 255))  # Fill 'screen' with white
+
+    if state.getState() == States.MAIN or state.getState() == States.SPIN:
+        wheel_surf.fill((255, 255, 255))  # Fill 'screen' with white
+        stat_surf.fill((125, 255, 255))
+
     pygame.draw.circle(wheel_surf, (150, 50, 0), (200, 200), 200, 3)
-    stat_surf.fill((125, 255, 255))
     score = font.render("Score: " + str(money), False, (200, 0, 50))
 
 
@@ -105,11 +107,13 @@ while True:
             + ((200 - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi / 180)))
         ))
 
-    # render buttons
-    renderButtons(buttons)
-
     # update spinner with current degree
     spinner.drawSpinner()
+
+    # render buttons and screen
+    renderButtons(buttons)
+    screen.blit(stat_surf, (0, 0))
+    screen.blit(wheel_surf, (0, 0))
 
     match state.getState():
         case States.SPIN:
@@ -124,10 +128,10 @@ while True:
             for i in range(num_decisions):
                 # if degree within range then announce result
                 if i * (360 / num_decisions) < degree < (i + 1) * (360 / num_decisions):
-                    print(f'i:', i)
+                    #print(f'i:', i)
                     result = decisions[i]
                     displayresult(result, font, screen)
-                    state.setState(States.MAIN)
+                    #state.setState(States.MAIN)
                     break
 
                 elif degree % (360 / num_decisions) == 0:
@@ -136,11 +140,7 @@ while True:
                     spinner.spin()
                     state.setState(States.SPIN)
                     break
-    screen.blit(wheel_surf, (0,0))
-    screen.blit(stat_surf, (600, 100))
-    #screen.blit(refreshButton.buttonSurface, (500,280))
-    screen.blit(score, (500, 300))
-    #renderButtons(buttons)
+
     processEvents()
 
 # To Do:

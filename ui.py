@@ -19,18 +19,15 @@ class Button(ABC):
     def getList(cls):
         return cls.buttons
 class RectangleButton(Button):
-    def __init__(self, screen, rect, width, height, font, buttonText=None, onclickFunction=None, functionArgument=None, onePress=False):
+    def __init__(self, screen, x, y, width, height, font, buttonText=None, onclickFunction=None, functionArgument=None, onePress=False):
         super().__init__()
         self.screen = screen
-        self.rect = rect
-        self.width = width
-        self.height = height
-        self.rect.width = width
-        self.rect.height = height
+        self.rect = pygame.Rect(x,y, width, height)
         self.onclickFunction = onclickFunction
         self.functionArgument = functionArgument
         self.onePress = onePress
         self.alreadyPressed = False
+        self.buttonDim = None
 
         self.fillColors = {
             'normal': '#333333',
@@ -44,35 +41,11 @@ class RectangleButton(Button):
             self.buttonSurf = font.render(buttonText, True, (20, 20, 20))
 
     def process(self):
-
-        # mousePos = pygame.mouse.get_pos()
-        # self.buttonDim = rect(self.screen, self.fillColors['hover'],self.buttonDim, self.width)
-        #
-        # #self.buttonSurface.fill(self.fillColors['normal'])
-        # if self.buttonDim.collidepoint(mousePos):
-        #     #self.buttonSurface.fill(self.fillColors['hover'])
-        #     self.buttonDim = rect(self.screen, self.fillColors['hover'], self.buttonDim, self.width)
-        #
-        #     if not pygame.mouse.get_pressed()[0]:
-        #         self.alreadyPressed = False
-        #
-        #     else:
-        #         #self.buttonSurface.fill(self.fillColors['pressed'])
-        #         self.buttonDim = rect(self.screen, self.fillColors['pressed'], self.buttonDim, self.width)
-        #
-        #         if self.onePress:
-        #             self.onclickFunction(self.functionArgument)
-        #
-        #         elif not self.alreadyPressed:
-        #             self.onclickFunction(self.functionArgument)
-        #             self.alreadyPressed = True
-
         mousePos = pygame.mouse.get_pos()
-        # print(self.rect)
+
         self.buttonDim = rect(self.screen, self.fillColors['normal'],self.rect, 0)
-        # self.buttonDim.x = 600
-        # self.buttonDim.y = 100
-        if self.rect.collidepoint(mousePos):
+
+        if self.buttonDim.collidepoint(mousePos):
             print(self.buttonDim)
             self.buttonDim = rect(self.screen, self.fillColors['hover'],self.rect, 0)
             if not pygame.mouse.get_pressed()[0]:
