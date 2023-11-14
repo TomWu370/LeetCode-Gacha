@@ -61,12 +61,12 @@ stat_surf = pygame.Surface(aspect)
 
 state = State()
 
-decisions = ['choice1', 'choice2']
+decisions = ['choice1', 'choice2', 'choice3', 'choice4', 'choice5']
 num_decisions = len(decisions)
 splits = int(360 / num_decisions)
-wheel_centre = 300
+wheel_centre = 400
 spinnerPos = (wheel_centre - 20, wheel_centre-200)
-spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 2, 2)
+spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 1, 0)
 
 money, data = startUp()
 
@@ -94,18 +94,25 @@ while True:
     for i in range(0, num_decisions):
         # for each decision place the corresponding text on screen
         text = font.render(decisions[i], False, (0, 0, 0))
+        i = num_decisions - i - 2 # move the first element back 2 slices, counterclockwise
         i += i + 1
+        # for i = 0, 1 i+4 is normal
+        # for i = 2,3 i is normal
+        if i < (num_decisions/2):
+            textChoice = pygame.transform.rotate(text, (i - (2 * i)) * (360 / (num_decisions * 2)))
+        else:
+            textChoice = pygame.transform.rotate(text, (i+num_decisions - (2 * i)) * (360 / (num_decisions * 2)))
 
-        textChoice = pygame.transform.rotate(text, (i - (2 * i)) * (360 / (num_decisions * 2)))
         textWidth = textChoice.get_rect().width
         textHeight = textChoice.get_rect().height
         # (200 - 100) controls how close  text is to center, 0 = very close, >100 = away
         wheel_surf.blit(textChoice, (
             (wheel_centre - (textWidth / 2))
-            + ((wheel_centre - 100) * math.cos(((i * (360 / (num_decisions * 2)))) * (math.pi / 180))),
+            + ((wheel_centre - 100) * math.cos((i * (360 / (num_decisions * 2))) * (math.pi / 180))),
             (wheel_centre - (textHeight / 2))
-            + ((wheel_centre - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi / 180)))
+            + ((wheel_centre - 100) * math.sin((i * (360 / (num_decisions * 2))) * (math.pi / 180)))
         ))
+
 
     # update spinner with current degree
     spinner.drawSpinner()
@@ -128,7 +135,8 @@ while True:
             for i in range(num_decisions):
                 # if degree within range then announce result
                 if i * (360 / num_decisions) < degree < (i + 1) * (360 / num_decisions):
-                    #print(f'i:', i)
+
+                    print(f'i:', i)
                     result = decisions[i]
                     displayresult(result, font, screen)
                     #state.setState(States.MAIN)
@@ -140,6 +148,7 @@ while True:
                     spinner.spin()
                     state.setState(States.SPIN)
                     break
+
 
     processEvents()
 
