@@ -64,14 +64,14 @@ state = State()
 decisions = ['choice1', 'choice2']
 num_decisions = len(decisions)
 splits = int(360 / num_decisions)
-
-spinnerPos = (180, 0)
+wheel_centre = 300
+spinnerPos = (wheel_centre - 20, wheel_centre-200)
 spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 2, 2)
 
 money, data = startUp()
 
 refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0],0,100, 20, font, "Refresh", ui.buttonAction)
-startButton = ui.CircleButton(wheel_surf, 200, 200, 20, 0, font, Spinner.spin, [spinner, state])
+startButton = ui.CircleButton(wheel_surf, wheel_centre, wheel_centre, 20, 0, font, Spinner.spin, [spinner, state])
 buttons = ui.Button.getList()
 
 while True:
@@ -81,14 +81,14 @@ while True:
         wheel_surf.fill((255, 255, 255))  # Fill 'screen' with white
         stat_surf.fill((125, 255, 255))
 
-    pygame.draw.circle(wheel_surf, (150, 50, 0), (200, 200), 200, 3)
+    pygame.draw.circle(wheel_surf, (150, 50, 0), (wheel_centre, wheel_centre), wheel_centre, 3)
     score = font.render("Score: " + str(money), False, (200, 0, 50))
 
 
     # render separation line on chart
     for i in range(num_decisions):
         # draw separation line for each choice
-        gfxdraw.pie(wheel_surf, 200, 200, 200, i * splits, splits, (0, 0, 0))
+        gfxdraw.pie(wheel_surf, wheel_centre, wheel_centre, wheel_centre, i * splits, splits, (0, 0, 0))
 
     # render decision text
     for i in range(0, num_decisions):
@@ -101,10 +101,10 @@ while True:
         textHeight = textChoice.get_rect().height
         # (200 - 100) controls how close  text is to center, 0 = very close, >100 = away
         wheel_surf.blit(textChoice, (
-            (200 - (textWidth / 2))
-            + ((200 - 100) * math.cos(((i * (360 / (num_decisions * 2)))) * (math.pi / 180))),
-            (200 - (textHeight / 2))
-            + ((200 - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi / 180)))
+            (wheel_centre - (textWidth / 2))
+            + ((wheel_centre - 100) * math.cos(((i * (360 / (num_decisions * 2)))) * (math.pi / 180))),
+            (wheel_centre - (textHeight / 2))
+            + ((wheel_centre - 100) * math.sin(((i * (360 / (num_decisions * 2)))) * (math.pi / 180)))
         ))
 
     # update spinner with current degree
