@@ -38,7 +38,7 @@ class RectangleButton(Button):
         #self.buttonSurface = pygame.Surface((self.width, self.height))
         #self.buttonDim = rect(self.x, self.y, self.width, self.height)
         if buttonText:
-            self.buttonSurf = font.render(buttonText, True, (20, 20, 20))
+            self.textSurf = font.render(buttonText, True, (20, 20, 20))
 
     def process(self):
         mousePos = pygame.mouse.get_pos()
@@ -58,7 +58,10 @@ class RectangleButton(Button):
                 elif not self.alreadyPressed:
                     self.onclickFunction(self.functionArgument)
                     self.alreadyPressed = True
-
+        if self.textSurf:
+            textrect = self.textSurf.get_rect()
+            textrect.center = self.rect.center
+            self.screen.blit(self.textSurf, textrect)
         # self.buttonSurface.blit(self.buttonSurf, [
         #     self.buttonDim.width / 2 - self.buttonSurf.get_rect().width / 2,
         #     self.buttonDim.height / 2 - self.buttonSurf.get_rect().height / 2

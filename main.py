@@ -31,11 +31,12 @@ def processEvents():
 
 def quit(action):
     # temporary code reduction, before utilising partial screen refresh
-    #pygame.display.update()  # Redraw screen when no argument
+    # pygame.display.update()  # Redraw screen when no argument
     # pass (start_x, start_y, width, height) to redraw portion of screen
     if action.type == pygame.QUIT:
         pygame.quit()
         sys.exit()
+
 
 def renderButtons(buttons):
     for button in buttons:
@@ -48,16 +49,15 @@ def displayresult(result, font, screen):
     textrect.center = screen.get_rect().center
     screen.blit(textsurface, textrect)
 
+
 aspect = (1600, 900)
-wheel_aspect = (aspect[0]*0.7, aspect[1])
+wheel_aspect = (aspect[0] * 0.7, aspect[1])
 pygame.init()  # Initializing pygame
 font = pygame.font.SysFont(None, 28)
+
 screen = pygame.display.set_mode(aspect, pygame.RESIZABLE)
 wheel_surf = pygame.Surface(wheel_aspect)
 stat_surf = pygame.Surface(aspect)
-
-# stat shift = wheel sizze
-# stat surf size = wheel_surf x times
 
 state = State()
 
@@ -65,12 +65,13 @@ decisions = ['choice1', 'choice2', 'choice3', 'choice4', 'choice5']
 num_decisions = len(decisions)
 splits = int(360 / num_decisions)
 wheel_centre = 400
-spinnerPos = (wheel_centre - 20, wheel_centre-200)
+spinnerPos = (wheel_centre - 20, wheel_centre - 200)
 spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 1, 0)
 
 money, data = startUp()
 
-refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0],0,100, 20, font, "Refresh", ui.buttonAction)
+refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh", ui.buttonAction)
+refreshButton2 = ui.RectangleButton(stat_surf, wheel_aspect[0], 100, 100, 20, font, "Refresh", ui.buttonAction)
 startButton = ui.CircleButton(wheel_surf, wheel_centre, wheel_centre, 20, 0, font, Spinner.spin, [spinner, state])
 buttons = ui.Button.getList()
 
@@ -84,7 +85,6 @@ while True:
     pygame.draw.circle(wheel_surf, (150, 50, 0), (wheel_centre, wheel_centre), wheel_centre, 3)
     score = font.render("Score: " + str(money), False, (200, 0, 50))
 
-
     # render separation line on chart
     for i in range(num_decisions):
         # draw separation line for each choice
@@ -94,18 +94,13 @@ while True:
     for i in range(0, num_decisions):
         # for each decision place the corresponding text on screen
         text = font.render(decisions[i], False, (0, 0, 0))
+        # generate i to be descending from list of odd numbers, so length of 3 would be 3,1,-1
+        i = 2 * (num_decisions - i - 2) + 1  # move the first element back 2 slices, counterclockwise
 
-        i = 2*(num_decisions-i-2) + 1 # move the first element back 2 slices, counterclockwise
-        print(f'i+= i+1 ',i) #7, 5, 3, 1, -1
-        # for i = 0, 1 i+4 is normal
-        # for i = 2,3 i is normal
-
-        if i <= (num_decisions/2):
+        if i <= (num_decisions / 2):
             textChoice = pygame.transform.rotate(text, (-i) * (360 / (num_decisions * 2)))
-            print(f'i-2i < ', i - (2 * i))
         else:
             textChoice = pygame.transform.rotate(text, (num_decisions - i) * (360 / (num_decisions * 2)))
-            print(f'i-2i > ', num_decisions - i)
 
         textWidth = textChoice.get_rect().width
         textHeight = textChoice.get_rect().height
@@ -116,9 +111,6 @@ while True:
             (wheel_centre - (textHeight / 2))
             + ((wheel_centre - 100) * math.sin((i * (360 / (num_decisions * 2))) * (math.pi / 180)))
         ))
-    # while True:
-    #     processEvents()
-
 
     # update spinner with current degree
     spinner.drawSpinner()
@@ -145,7 +137,7 @@ while True:
                     print(f'i:', i)
                     result = decisions[i]
                     displayresult(result, font, screen)
-                    #state.setState(States.MAIN)
+                    # state.setState(States.MAIN)
                     break
 
                 elif degree % (360 / num_decisions) == 0:
@@ -154,7 +146,6 @@ while True:
                     spinner.spin()
                     state.setState(States.SPIN)
                     break
-
 
     processEvents()
 
