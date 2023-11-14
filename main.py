@@ -94,14 +94,18 @@ while True:
     for i in range(0, num_decisions):
         # for each decision place the corresponding text on screen
         text = font.render(decisions[i], False, (0, 0, 0))
-        i = num_decisions - i - 2 # move the first element back 2 slices, counterclockwise
-        i += i + 1
+
+        i = 2*(num_decisions-i-2) + 1 # move the first element back 2 slices, counterclockwise
+        print(f'i+= i+1 ',i) #7, 5, 3, 1, -1
         # for i = 0, 1 i+4 is normal
         # for i = 2,3 i is normal
-        if i < (num_decisions/2):
-            textChoice = pygame.transform.rotate(text, (i - (2 * i)) * (360 / (num_decisions * 2)))
+
+        if i <= (num_decisions/2):
+            textChoice = pygame.transform.rotate(text, (-i) * (360 / (num_decisions * 2)))
+            print(f'i-2i < ', i - (2 * i))
         else:
-            textChoice = pygame.transform.rotate(text, (i+num_decisions - (2 * i)) * (360 / (num_decisions * 2)))
+            textChoice = pygame.transform.rotate(text, (num_decisions - i) * (360 / (num_decisions * 2)))
+            print(f'i-2i > ', num_decisions - i)
 
         textWidth = textChoice.get_rect().width
         textHeight = textChoice.get_rect().height
@@ -112,6 +116,8 @@ while True:
             (wheel_centre - (textHeight / 2))
             + ((wheel_centre - 100) * math.sin((i * (360 / (num_decisions * 2))) * (math.pi / 180)))
         ))
+    # while True:
+    #     processEvents()
 
 
     # update spinner with current degree
