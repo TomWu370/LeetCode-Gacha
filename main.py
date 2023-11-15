@@ -38,9 +38,13 @@ def quit(action):
         sys.exit()
 
 
-def renderButtons(buttons):
-    for button in buttons:
+def renderButtons(objects):
+    for button in objects:
         button.process()
+
+def renderTexts(objects):
+    for text in objects:
+        text.process()
 
 
 def displayresult(result, font, screen):
@@ -65,30 +69,39 @@ decisions = ['choice1', 'choice2', 'choice3', 'choice4', 'choice5']
 num_decisions = len(decisions)
 splits = int(360 / num_decisions)
 wheel_centre = 400
+wheel_radius = wheel_centre
 spinnerPos = (wheel_centre - 20, wheel_centre - 200)
 spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 1, 0)
 
 money, data = startUp()
 
 refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh", ui.buttonAction)
-refreshButton2 = ui.RectangleButton(stat_surf, wheel_aspect[0], 100, 100, 20, font, "Refresh", ui.buttonAction)
+refreshButton2 = ui.variableText(stat_surf, wheel_aspect[0], 100, 100, 20, money,font, "Refresh")
+# Text row, text + variable
+# each frame update text, however not fetching otherwise it'd be too slow
+# self variable, when updated, these variables are updated as well
+# pass text list as object like start button, then update the variables
+# process method would just be displaying and blitting
+
+
 startButton = ui.CircleButton(wheel_surf, wheel_centre, wheel_centre, 20, 0, font, Spinner.spin, [spinner, state])
 buttons = ui.Button.getList()
+texts = ui.Text.getList()
+print(buttons)
 
 while True:
     pygame.display.update()
 
-    if state.getState() == States.MAIN or state.getState() == States.SPIN:
-        wheel_surf.fill((255, 255, 255))  # Fill 'screen' with white
-        stat_surf.fill((125, 255, 255))
+    wheel_surf.fill((255, 255, 255))  # Fill 'screen' with white
+    stat_surf.fill((125, 255, 255))
 
-    pygame.draw.circle(wheel_surf, (150, 50, 0), (wheel_centre, wheel_centre), wheel_centre, 3)
+    pygame.draw.circle(wheel_surf, (150, 50, 0), (wheel_centre, wheel_radius), wheel_radius, 3)
     score = font.render("Score: " + str(money), False, (200, 0, 50))
 
     # render separation line on chart
     for i in range(num_decisions):
         # draw separation line for each choice
-        gfxdraw.pie(wheel_surf, wheel_centre, wheel_centre, wheel_centre, i * splits, splits, (0, 0, 0))
+        gfxdraw.pie(wheel_surf, wheel_centre, wheel_radius, wheel_radius, i * splits, splits, (0, 0, 0))
 
     # render decision text
     for i in range(0, num_decisions):
@@ -117,6 +130,7 @@ while True:
 
     # render buttons and screen
     renderButtons(buttons)
+    renderTexts(texts)
     screen.blit(stat_surf, (0, 0))
     screen.blit(wheel_surf, (0, 0))
 

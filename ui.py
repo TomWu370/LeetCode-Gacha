@@ -8,9 +8,11 @@ import database
 
 class Button(ABC):
     buttons = []
+
     @abstractmethod
     def __init__(self):
         Button.buttons.append(self)
+
     @abstractmethod
     def process(self):
         pass
@@ -18,6 +20,8 @@ class Button(ABC):
     @classmethod
     def getList(cls):
         return cls.buttons
+
+
 class RectangleButton(Button):
     def __init__(self, screen, x, y, width, height, font, buttonText=None, onclickFunction=None, functionArgument=None, onePress=False):
         super().__init__()
@@ -34,9 +38,6 @@ class RectangleButton(Button):
             'hover': '#666666',
             'pressed': '#333333',
         }
-
-        #self.buttonSurface = pygame.Surface((self.width, self.height))
-        #self.buttonDim = rect(self.x, self.y, self.width, self.height)
         if buttonText:
             self.textSurf = font.render(buttonText, True, (20, 20, 20))
 
@@ -46,7 +47,6 @@ class RectangleButton(Button):
         self.buttonDim = rect(self.screen, self.fillColors['normal'],self.rect, 0)
 
         if self.buttonDim.collidepoint(mousePos):
-            print(self.buttonDim)
             self.buttonDim = rect(self.screen, self.fillColors['hover'],self.rect, 0)
             if not pygame.mouse.get_pressed()[0]:
                 self.alreadyPressed = False
@@ -62,11 +62,7 @@ class RectangleButton(Button):
             textrect = self.textSurf.get_rect()
             textrect.center = self.rect.center
             self.screen.blit(self.textSurf, textrect)
-        # self.buttonSurface.blit(self.buttonSurf, [
-        #     self.buttonDim.width / 2 - self.buttonSurf.get_rect().width / 2,
-        #     self.buttonDim.height / 2 - self.buttonSurf.get_rect().height / 2
-        # ])
-        #self.screen.blit(self.buttonSurface, self.buttonDim)
+
 
 class CircleButton(Button):
     def __init__(self, screen, x, y, radius, width, font, onclickFunction=None, functionArgument=None, onePress=False):
@@ -113,6 +109,42 @@ class CircleButton(Button):
                     self.state.setState(States.SPIN)
                     self.alreadyPressed = True
 
+
+class Text(ABC):
+    texts = []
+
+    @abstractmethod
+    def __init__(self):
+        Text.texts.append(self)
+
+    @abstractmethod
+    def process(self):
+        pass
+
+    @classmethod
+    def getList(cls):
+        return cls.texts
+
+
+class variableText(Text):
+    def __init__(self, screen, x, y, width, height, variable, font, buttonText=None):
+        super().__init__()
+        self.screen = screen
+        self.rect = pygame.Rect(x, y, width, height)
+        print(self.rect.right)
+        self.variable = variable
+        self.font = font
+        self.buttonText = buttonText if buttonText else ""
+        self.textSurf = self.font.render((self.buttonText+": "+str(self.variable)), True, (20, 20, 20))
+
+    def process(self):
+        textrect = self.textSurf.get_rect()
+        textrect.topleft = self.rect.topleft
+        self.screen.blit(self.textSurf, textrect)
+
+    def updateVariable(self, newValue):
+        self.variable = newValue
+        self.textSurf = self.font.render((self.buttonText + ": " + str(newValue)), True, (20, 20, 20))
 
 def buttonAction(*args):
     print(database.read())
