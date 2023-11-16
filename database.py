@@ -31,8 +31,9 @@ def read():
     return dict(rows[0])
 
 
-def update(data, used=0):
-    rows = read()
+def update(data, used=0, rows=None):
+    if not rows:
+        rows = read()
     used += rows['used']
     cursor.execute(
         "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ? WHERE username = ?",
@@ -55,7 +56,7 @@ def spend():
     usable = getUsable(rows)
     if usable >= reward_config['cost'] * 1:
         used = reward_config['cost'] * 1  # 1 equal to amount
-        update(rows, used)
+        update(rows, used, rows)
     else:
         print('not enough')
 
@@ -67,12 +68,14 @@ def getUsable(rows=None):
             (rows['medium'] * int(reward_config['medium_point'])) + \
             (rows['hard'] * int(reward_config['hard_point']))
     usable = total - rows['used']
-    return usable
+    return usable, rows
 
 
 def refresh():
     data = leetscore.getQuestions()
-    update(data)
+    usable, rows = getUsable()
+    update(data, rows=rows)
+    return data, usable
 
 #dat = {'easy': 2, 'medium': 2, 'hard': 4}
 # data2 = {'easy': 5, 'medium': 2, 'hard': 4}
