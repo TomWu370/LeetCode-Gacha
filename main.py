@@ -3,6 +3,7 @@ from pygame import gfxdraw
 import sys
 import math
 import database as db
+import leetscore
 import ui
 from spinner import Spinner
 from states import States, State
@@ -15,9 +16,9 @@ from states import States, State
 
 def startUp():
     # get initial data
-    money = db.getUsable()
-    data = db.read()
-    return money, data
+    username = leetscore.getUsername()
+    data, gold = db.refresh()
+    return username, data['easy'], data['medium'], data['hard'], gold
 
 
 def getEvents():
@@ -41,6 +42,7 @@ def quit(action):
 def renderButtons(objects):
     for button in objects:
         button.process()
+
 
 def renderTexts(objects):
     for text in objects:
@@ -73,21 +75,25 @@ wheel_radius = wheel_centre
 spinnerPos = (wheel_centre - 20, wheel_centre - 200)
 spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 1, 0)
 
-money, data = startUp()
+name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
 
-refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh", ui.buttonAction)
-refreshButton2 = ui.variableText(stat_surf, wheel_aspect[0], 100, 100, 20, money,font, "Refresh")
+username = ui.variableText(stat_surf, wheel_aspect[0], 50, 100, 20, leetscore.getUsername(), font, "Username")
+easy_qu = ui.variableText(stat_surf, wheel_aspect[0], 100, 100, 20, easy, font, "Easy")
+medium_qu = ui.variableText(stat_surf, wheel_aspect[0], 150, 100, 20, medium, font, "Medium")
+hard_qu = ui.variableText(stat_surf, wheel_aspect[0], 200, 100, 20, hard, font, "Hard")
+currency = ui.variableText(stat_surf, wheel_aspect[0], 250, 100, 20, money, font, "Currency")
+texts = ui.Text.getList()
+
 # Text row, text + variable
 # each frame update text, however not fetching otherwise it'd be too slow
 # self variable, when updated, these variables are updated as well
 # pass text list as object like start button, then update the variables
 # process method would just be displaying and blitting
 
-
+refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh",
+                                   ui.variableText.processTexts, texts[1:])  # ignore username
 startButton = ui.CircleButton(wheel_surf, wheel_centre, wheel_centre, 20, 0, font, Spinner.spin, [spinner, state])
 buttons = ui.Button.getList()
-texts = ui.Text.getList()
-print(buttons)
 
 while True:
     pygame.display.update()
@@ -191,3 +197,6 @@ while True:
 #             print(event.pos)
 #             print(pointer.get_rect())
 #             break
+
+# newVal = [name, easy, medium, hard, money] = startUp() this syntax could be used to convert multi value function
+# into a list
