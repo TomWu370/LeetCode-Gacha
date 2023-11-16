@@ -54,14 +54,15 @@ class RectangleButton(Button):
             else:
                 self.buttonDim = rect(self.screen, self.fillColors['pressed'],self.rect, 0)
                 if self.onePress:
-                    self.onclickFunction(self.functionArgument)
+                    self.onclickFunction(self, self.functionArgument)
                 elif not self.alreadyPressed:
-                    self.onclickFunction(self.functionArgument)
+                    self.onclickFunction(self, self.functionArgument)
                     self.alreadyPressed = True
         if self.textSurf:
             textrect = self.textSurf.get_rect()
             textrect.center = self.rect.center
             self.screen.blit(self.textSurf, textrect)
+
 
 
 class CircleButton(Button):
@@ -131,7 +132,6 @@ class variableText(Text):
         super().__init__()
         self.screen = screen
         self.rect = pygame.Rect(x, y, width, height)
-        print(self.rect.right)
         self.variable = variable
         self.font = font
         self.buttonText = buttonText if buttonText else ""
@@ -145,6 +145,14 @@ class variableText(Text):
     def updateVariable(self, newValue):
         self.variable = newValue
         self.textSurf = self.font.render((self.buttonText + ": " + str(newValue)), True, (20, 20, 20))
+
+    def processTexts(self, variables):
+        data, usable = database.refresh()
+        data = list(data.values())
+        data.append(usable)
+        for i in range(len(variables)):
+            variables[i].updateVariable(data[i])
+
 
 def buttonAction(*args):
     print(database.read())
