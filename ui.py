@@ -73,11 +73,16 @@ class CircleButton(Button):
         self.radius = radius
         self.width = width
         self.font = font
+        # specialised for Spin button
         self.onclickFunction = onclickFunction
+        self.spin = onclickFunction[0]
+        self.refresh = onclickFunction[1]
+
         self.functionArgument = functionArgument
-        # specialised for Retry button
         self.spinner = functionArgument[0]
-        self.state = functionArgument[1]
+        self.texts = functionArgument[1]
+        self.state = functionArgument[2]
+
         self.onePress = onePress
         self.alreadyPressed = False
 
@@ -101,14 +106,16 @@ class CircleButton(Button):
 
             else:
                 self.buttonDim = circle(self.screen, self.fillColors['pressed'], self.center, self.radius, self.width)
-                if self.onePress:
-                    self.onclickFunction(self.spinner)
-                    self.state.setState(States.SPIN)
 
-                elif not self.alreadyPressed:
-                    self.onclickFunction(self.spinner)
-                    self.state.setState(States.SPIN)
-                    self.alreadyPressed = True
+                if self.onePress ^ (not self.alreadyPressed): # xor between the 2 condition
+                    if not database.spend():
+                        self.state.setState(States.INSUFFICIENT)
+                    else:
+                        self.spin(self.spinner)
+                        self.refresh(self, self.texts)
+                        self.state.setState(States.SPIN)
+                        if not self.alreadyPressed:
+                            self.alreadyPressed = True
 
 
 class Text(ABC):

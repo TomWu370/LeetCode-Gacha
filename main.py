@@ -92,7 +92,8 @@ texts = ui.Text.getList()
 
 refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh",
                                    ui.variableText.processTexts, texts[1:])  # ignore username
-startButton = ui.CircleButton(wheel_surf, wheel_centre, wheel_centre, 20, 0, font, Spinner.spin, [spinner, state])
+startButton = ui.CircleButton(wheel_surf, wheel_centre, wheel_centre, 20, 0, font,
+                              [Spinner.spin,ui.variableText.processTexts], [spinner, texts[1:], state])
 buttons = ui.Button.getList()
 
 while True:
@@ -154,7 +155,7 @@ while True:
                 # if degree within range then announce result
                 if i * (360 / num_decisions) < degree < (i + 1) * (360 / num_decisions):
 
-                    print(f'i:', i)
+                    #print(f'i:', i)
                     result = decisions[i]
                     displayresult(result, font, screen)
                     # state.setState(States.MAIN)
@@ -162,10 +163,12 @@ while True:
 
                 elif degree % (360 / num_decisions) == 0:
                     displayresult('Spinning Again', font, screen)
-                    print('on the line')
                     spinner.spin()
                     state.setState(States.SPIN)
                     break
+        case States.INSUFFICIENT:
+            # when not enough money to spin
+            displayresult("Not enough money", font, screen)
 
     processEvents()
 

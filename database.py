@@ -37,7 +37,7 @@ def update(data, used=0, rows=None):
     used += rows['used']
     cursor.execute(
         "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ? WHERE username = ?",
-        (USER, data['easy'], data['medium'], data['hard'], used))
+        (data['easy'], data['medium'], data['hard'], used, USER))
     # commit the changes
     connection.commit()
     # take difference between each tier then add amount of points for each tier
@@ -46,19 +46,30 @@ def update(data, used=0, rows=None):
 def set(data, used=0):
     cursor.execute(
         "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ? WHERE username = ?",
-        (USER, data['easy'], data['medium'], data['hard'], used))
+        (data['easy'], data['medium'], data['hard'], used, USER))
+    # commit the changes
+    connection.commit()
+
+
+def resetUsed(used=0):
+    # reset the total used to 0 or defined value
+    cursor.execute(
+        "UPDATE leetData SET used = ? WHERE username = ?",
+        (used, USER))
     # commit the changes
     connection.commit()
 
 
 def spend():
     rows = read()
-    usable = getUsable(rows)
-    if usable >= reward_config['cost'] * 1:
-        used = reward_config['cost'] * 1  # 1 equal to amount
+    usable,_ = getUsable(rows)
+    if usable >= int(reward_config['cost'] * 1):
+        used = int(reward_config['cost'] * 1)  # 1 equal to amount
         update(rows, used, rows)
+        return True
     else:
-        print('not enough')
+        # Not enough
+        return False
 
 
 def getUsable(rows=None):
@@ -77,13 +88,15 @@ def refresh():
     update(data, rows=rows)
     return data, usable
 
-#dat = {'easy': 2, 'medium': 2, 'hard': 4}
+resetUsed()
+#data = {'easy': 2, 'medium': 2, 'hard': 4}
 # data2 = {'easy': 5, 'medium': 2, 'hard': 4}
 # # initialise
 # cursor.execute(
-#     "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ?",
-#     (data['easy'], data['medium'], data['hard'], 0))
-#print(f'read: ',read())
+#     "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ? WHERE username = ?",
+#     (data['easy'], data['medium'], data['hard'], 0, USER))
+# connection.commit()
+# print(f'read: ',read())
 # print(f'money start: ', getUsable())
 # print(f'read: ',read())
 # set(dat, 0)

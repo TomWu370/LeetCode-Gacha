@@ -6,6 +6,7 @@ class States(Enum):
     MAIN = 0
     RESULT = 1
     SPIN = 2
+    INSUFFICIENT = 3
 
 
 class State:
