@@ -88,7 +88,7 @@ def refresh():
     update(data, rows=rows)
     return data, usable
 
-resetUsed()
+#resetUsed()
 #data = {'easy': 2, 'medium': 2, 'hard': 4}
 # data2 = {'easy': 5, 'medium': 2, 'hard': 4}
 # # initialise
