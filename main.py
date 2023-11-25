@@ -76,6 +76,7 @@ font = pygame.font.SysFont(None, 28)
 
 screen = pygame.display.set_mode(aspect, pygame.RESIZABLE)
 wheel_surf = pygame.Surface(wheel_aspect)
+wheel_centre = wheel_surf.get_rect().center
 stat_surf = pygame.Surface(aspect)
 
 state = State()
@@ -83,11 +84,20 @@ state = State()
 decisions = ['choice1', 'choice2', 'choice3', 'choice4']
 weights = [1,1,1,4]
 num_decisions = len(decisions)
-splits = int(360 / num_decisions)
 
-wheel_centre = wheel_surf.get_rect().center
+decision_ranges = {}
+total_weight = sum(weights)
 
+for i in range(len(weights)):
+    # the current choice's starting degree = the end degree of the last choice
+    if i == 0:
+        start = 0
+    else:
+        start = decision_ranges[i - 1][1]
+    end = start + (weights[i]/total_weight) * 360
 
+    decision_ranges[i] = [start, end]
+print(decision_ranges)
 ##### create piechart
 
 fig, ax = plt.subplots(1,1, figsize=(wheel_aspect[0]/100, wheel_aspect[1]/100))
