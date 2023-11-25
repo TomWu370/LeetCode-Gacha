@@ -37,7 +37,10 @@ def getUsername():
         variables=leetcode.GraphqlQueryVariables(),
     )
     raw_data = api_instance.graphql_post(body=graphql_request)
-    return raw_data.data.user.username
+    if raw_data:
+        return raw_data.data.user.username
+    else:
+        print("Please check your internet or update your session cookies")
 
 
 def getQuestions():
