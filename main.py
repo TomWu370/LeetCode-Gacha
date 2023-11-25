@@ -66,8 +66,11 @@ def displayresult(result, font, screen):
     screen.blit(textsurface, textrect)
 
 
-aspect = (900, 900)
+aspect = (1600, 900)
 wheel_aspect = (aspect[0] * 0.7, aspect[1])
+text_gap = 50
+text_w = 100
+text_h = 20
 pygame.init()  # Initializing pygame
 font = pygame.font.SysFont(None, 28)
 
@@ -78,19 +81,19 @@ stat_surf = pygame.Surface(aspect)
 state = State()
 
 decisions = ['choice1', 'choice2', 'choice3', 'choice4']
+weights = [1,1,1,4]
 num_decisions = len(decisions)
 splits = int(360 / num_decisions)
-wheel_centre = 400
-wheel_radius = wheel_centre
+
+wheel_centre = wheel_surf.get_rect().center
+
 
 ##### create piechart
-y = np.array([35, 25,  15])
-mylabels = ["Bananas", "Cherries", "orane"]
 
 fig, ax = plt.subplots(1,1, figsize=(wheel_aspect[0]/100, wheel_aspect[1]/100))
 
 # radius of 1.5 fits the screen the best
-plt.pie(y, labels=mylabels, counterclock=False, radius=1.5, startangle=90,  labeldistance=0.7, rotatelabels=270)
+plt.pie(weights, labels=decisions, counterclock=False, radius=1.5, startangle=90,  labeldistance=0.7, rotatelabels=270)
 
 ax = fig.gca()
 
@@ -105,27 +108,24 @@ image = pygame.image.frombuffer(raw_data, size, "ARGB")
 
 ##### - convert into PyGame image -
 
-spinnerPos = (wheel_centre - 20, wheel_centre - 200)
-spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 1, 0)
+# 5 and 200 are micro adjustments, due to the matplotlib pie not being perfectly centered
+spinnerPos = (wheel_centre[0]-5, wheel_centre[1]-200)
+spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.001)
 
 name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
 
-username = ui.variableText(stat_surf, wheel_aspect[0], 50, 100, 20, leetscore.getUsername(), font, "Username")
-easy_qu = ui.variableText(stat_surf, wheel_aspect[0], 100, 100, 20, easy, font, "Easy")
-medium_qu = ui.variableText(stat_surf, wheel_aspect[0], 150, 100, 20, medium, font, "Medium")
-hard_qu = ui.variableText(stat_surf, wheel_aspect[0], 200, 100, 20, hard, font, "Hard")
-currency = ui.variableText(stat_surf, wheel_aspect[0], 250, 100, 20, money, font, "Currency")
+username = ui.variableText(stat_surf, wheel_aspect[0], 1 * text_gap, text_w, text_h, leetscore.getUsername(), font, "Username")
+easy_qu = ui.variableText(stat_surf, wheel_aspect[0], 2 * text_gap, text_w, text_h, easy, font, "Easy")
+medium_qu = ui.variableText(stat_surf, wheel_aspect[0], 3 * text_gap, text_w, text_h, medium, font, "Medium")
+hard_qu = ui.variableText(stat_surf, wheel_aspect[0], 4 * text_gap, text_w, text_h, hard, font, "Hard")
+currency = ui.variableText(stat_surf, wheel_aspect[0], 5 * text_gap, text_w, text_h, money, font, "Currency")
 texts = ui.Text.getList()
 
-# Text row, text + variable
-# each frame update text, however not fetching otherwise it'd be too slow
-# self variable, when updated, these variables are updated as well
-# pass text list as object like start button, then update the variables
-# process method would just be displaying and blitting
 
 refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh",
                                    ui.variableText.processTexts, texts[1:])  # ignore username
-startButton = ui.CircleButton(wheel_surf, wheel_centre, wheel_centre, 20, 0, font,
+# + 15 on wheel_centre[0] is micro adjustment
+startButton = ui.CircleButton(wheel_surf, (wheel_centre[0]+15, wheel_centre[1]), 20, 0, font,
                               [Spinner.spin,ui.variableText.processTexts], [spinner, texts[1:], state])
 buttons = ui.Button.getList()
 
@@ -134,41 +134,7 @@ while True:
     wheel_surf.fill((0, 0, 0))  # Fill 'screen' with white
     stat_surf.fill((125, 255, 255))
 
-    pygame.draw.circle(wheel_surf, (150, 50, 0), (wheel_centre, wheel_radius), wheel_radius, 3)
     score = font.render("Score: " + str(money), False, (200, 0, 50))
-
-    # # render separation line on chart
-    # for i in range(num_decisions):
-    #     # draw separation line for each choice
-    #     gfxdraw.pie(wheel_surf, wheel_centre, wheel_radius, wheel_radius, i * splits, splits, (0, 0, 0))
-    #
-    # # render decision text
-    # for i in range(0, num_decisions):
-    #     # for each decision place the corresponding text on screen
-    #     text = font.render(decisions[i], False, (0, 0, 0))
-    #     j = i
-    #     # generate i to be descending from list of odd numbers, so length of 3 would be 3,1,-1
-    #     i = 2 * (num_decisions - i - 2) + 1  # move the first element back 2 slices, counterclockwise
-    #
-    #     if i <= (num_decisions / 2):
-    #         textChoice = pygame.transform.rotate(text, (-i) * (360 / (num_decisions * 2)))
-    #     else:
-    #         textChoice = pygame.transform.rotate(text, (num_decisions - i) * (360 / (num_decisions * 2)))
-    #
-    #     textWidth = textChoice.get_rect().width
-    #     textHeight = textChoice.get_rect().height
-    #     # (200 - 100) controls how close  text is to center, 0 = very close, >100 = away
-    #     weights = [1,1,1,1,1]
-    #     print(f'j:,', j, ' x:',            (wheel_centre - (textWidth / 2))
-    #         + ((wheel_centre - 100) * math.cos((i * (360 / (num_decisions * 2))) * (math.pi / 180))))
-    #     print(f'j:,', j, ' y:',             (wheel_centre - (textHeight / 2))
-    #         + ((wheel_centre - 100) * math.sin((i * (360 / (num_decisions * 2))) * (math.pi / 180))))
-    #     wheel_surf.blit(textChoice, (
-    #         (wheel_centre - (textWidth / 2))
-    #         + ((wheel_centre - 100) * math.cos((i * (360 / (num_decisions * 2))) * (math.pi / 180))),
-    #         (wheel_centre - (textHeight / 2))
-    #         + ((wheel_centre - 100) * math.sin((i * (360 / (num_decisions * 2))) * (math.pi / 180)))
-    #     ))
 
 
     # update spinner with current degree

@@ -66,10 +66,10 @@ class RectangleButton(Button):
 
 
 class CircleButton(Button):
-    def __init__(self, screen, x, y, radius, width, font, onclickFunction=None, functionArgument=None, onePress=False):
+    def __init__(self, screen, center, radius, width, font, onclickFunction=None, functionArgument=None, onePress=False):
         super().__init__()
         self.screen = screen
-        self.center = (x, y)
+        self.center = center
         self.radius = radius
         self.width = width
         self.font = font

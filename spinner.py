@@ -19,6 +19,7 @@ class Spinner:
         rot_rect = rotated_surf.get_rect(center=self.spinner_rect.center)  # Get dimensions of rotated spinner
         self.screen.blit(rotated_surf, rot_rect)  # Put the rotated spinner on screen
 
+
     def rotateSpinner(self):
         self.degree = (self.degree - self.velocity) % 360  # decrease angle by velocity
         self.velocity -= self.decay
