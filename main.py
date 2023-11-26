@@ -93,10 +93,10 @@ for i in range(len(weights)):
     if i == 0:
         start = 0
     else:
-        start = decision_ranges[i - 1][1]
+        start = decision_ranges[i - 1]['end']
     end = start + (weights[i]/total_weight) * 360
 
-    decision_ranges[i] = [start, end]
+    decision_ranges[i] = {"start": start, "end": end}
 
 ##### create piechart
 
@@ -106,7 +106,7 @@ fig, ax = plt.subplots(1,1, figsize=(wheel_aspect[0]/100, wheel_aspect[1]/100))
 plt.pie(weights, labels=decisions, counterclock=False, radius=1.5, startangle=90,  labeldistance=0.7, rotatelabels=270)
 
 ax = fig.gca()
-print(3.5 % 4.2)
+
 canvas = agg.FigureCanvasAgg(fig)
 canvas.draw()
 renderer = canvas.get_renderer()
@@ -141,7 +141,7 @@ buttons = ui.Button.getList()
 
 while True:
     pygame.display.update()
-    wheel_surf.fill((0, 0, 0))  # Fill 'screen' with white
+
     stat_surf.fill((125, 255, 255))
 
     score = font.render("Score: " + str(money), False, (200, 0, 50))
@@ -173,15 +173,13 @@ while True:
             degree = spinner.getDegree()
             for i in range(num_decisions):
                 # if degree within range then announce result
-                if decision_ranges[i][0] < degree < decision_ranges[i][1]:
+                if decision_ranges[i]['start'] < degree < decision_ranges[i]['end']:
 
-                    #print(f'i:', i)
                     result = decisions[i]
                     displayresult(result, font, screen)
-                    # state.setState(States.MAIN)
                     break
 
-                elif degree == decision_ranges[i][0] or degree == decision_ranges[i][1]:
+                elif degree in {decision_ranges[i]['start'], decision_ranges[i]['end']}:
                     displayresult('Spinning Again', font, screen)
                     spinner.spin()
                     state.setState(States.SPIN)
@@ -205,7 +203,7 @@ while True:
 # 9) separate screen and stat_surf O
 # firstly create a large screen, then define wheel surface and stat surface separately O
 # modify rectangular button class to not create new surface but rather print on existing surface like circular button O
-# 10) update pie chart drawing method to use PIL image with degree based positioning and use image instead
+# 10) update pie chart drawing method to use PIL image with degree based positioning and use image instead O
 # 11) implement layer system to manage all the different layers/surfaces/images/attachments
 
 
