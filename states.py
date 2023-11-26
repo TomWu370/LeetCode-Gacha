@@ -7,6 +7,7 @@ class States(Enum):
     RESULT = 1
     SPIN = 2
     INSUFFICIENT = 3
+    RESIZE = 4
 
 
 class State:
