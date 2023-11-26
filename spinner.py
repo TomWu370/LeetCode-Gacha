@@ -3,13 +3,13 @@ import pygame
 
 
 class Spinner:
-    def __init__(self, screen, pointer_img, pointer_pos, max_velocity, min_velocity=0, decay=0.002, starting_degree=0, clockwise=True):
+    def __init__(self, screen, pointer_img, pointer_pos, max_velocity, min_velocity=0, current_velocity=None, decay=0.002, starting_degree=0, clockwise=True):
         self.screen = screen
         self.pointer = pygame.image.load(pointer_img).convert_alpha()  # Use convert_alpha to preserve transparency
         self.pointer_pos = pointer_pos  # Put it in the middle
         self.max_velocity = max_velocity
         self.min_velocity = min_velocity
-        self.velocity = 0
+        self.velocity = 0 if not current_velocity else current_velocity
         self.decay = decay  # adjust this value so that it depends on number of decisions, 0.0002
         self.degree = starting_degree  # starting wheel degree
         self.spinner_rect = self.screen.blit(self.pointer, self.pointer_pos)
@@ -39,3 +39,6 @@ class Spinner:
 
     def getDegree(self):
         return self.degree
+
+    def getVelocity(self):
+        return self.velocity

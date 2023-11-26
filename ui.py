@@ -18,6 +18,10 @@ class Button(ABC):
         pass
 
     @classmethod
+    def init(cls):
+        cls.buttons = []
+
+    @classmethod
     def getList(cls):
         return cls.buttons
 

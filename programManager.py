@@ -1,0 +1,1 @@
+# this class will store and manage runtime variables

@@ -1,8 +1,10 @@
 import pygame
 import matplotlib
 from matplotlib import pyplot as plt
+
 matplotlib.use("Agg")
 import matplotlib.backends.backend_agg as agg
+
 
 class Wheel:
 
@@ -11,7 +13,11 @@ class Wheel:
         weights = [1, 1, 1, 4]
         num_decisions = len(decisions)
 
-        self.decision_ranges = {}
+        self.decision_ranges = self.initialiseRanges(weights)
+        self.wheelImage = self.createWheel(decisions, width, height)
+
+    def initialiseRanges(self, weights):
+        decision_ranges = {}
         total_weight = sum(weights)
 
         for i in range(len(weights)):
@@ -19,11 +25,13 @@ class Wheel:
             if i == 0:
                 start = 0
             else:
-                start = self.decision_ranges[i - 1]['end']
+                start = decision_ranges[i - 1]['end']
             end = start + (weights[i] / total_weight) * 360
 
-            self.decision_ranges[i] = {"start": start, "end": end}
+            decision_ranges[i] = {"start": start, "end": end}
+        return decision_ranges
 
+    def createWheel(self, decisions, width, height):
         ##### create piechart
 
         fig, ax = plt.subplots(1, 1, figsize=(width, height))
@@ -39,3 +47,4 @@ class Wheel:
         size = canvas.get_width_height()
 
         image = pygame.image.frombuffer(raw_data, size, "ARGB")
+        return image

@@ -18,6 +18,7 @@ import leetscore
 import ui
 from spinner import Spinner
 from states import States, State
+from wheel import Wheel
 
 
 # api
@@ -38,7 +39,7 @@ def getEvents():
 def processEvents(state):
     for event in getEvents():
         quit(event)
-        if event.type == pygame.Resize:
+        if event.type == pygame.VIDEORESIZE:
             state.setState(States.RESIZE)
 
 
@@ -69,6 +70,7 @@ def displayresult(result, font, screen):
 
 # 1 time variables here
 name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
+start_degree = 0
 while True:
     # dynamic resolution here
     aspect = (1600, 900)
@@ -90,42 +92,15 @@ while True:
     weights = [1,1,1,4]
     num_decisions = len(decisions)
 
-    decision_ranges = {}
-    total_weight = sum(weights)
-
-    for i in range(len(weights)):
-        # the current choice's starting degree = the end degree of the last choice
-        if i == 0:
-            start = 0
-        else:
-            start = decision_ranges[i - 1]['end']
-        end = start + (weights[i]/total_weight) * 360
-
-        decision_ranges[i] = {"start": start, "end": end}
-
-    ##### create piechart
-
-    fig, _ = plt.subplots(1,1, figsize=(wheel_aspect[0]/100, wheel_aspect[1]/100))
-
-    # radius of 1.5 fits the screen the best
-    plt.pie(weights, labels=decisions, counterclock=False, radius=1.5, startangle=90,  labeldistance=0.7, rotatelabels=270)
-
-
-    canvas = agg.FigureCanvasAgg(fig)
-    canvas.draw()
-    raw_data = canvas.tostring_argb()
-
-    size = canvas.get_width_height()
-
-    image = pygame.image.frombuffer(raw_data, size, "ARGB")
-
-    ##### - convert into PyGame image -
+    image = Wheel(decisions, weights, wheel_aspect[0]/100, wheel_aspect[1]/100).wheelImage
 
     # 5 and 200 are micro adjustments, due to the matplotlib pie not being perfectly centered
     spinnerPos = (wheel_centre[0]-5, wheel_centre[1]-200)
-    spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.002)
+    spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.002, starting_degree=start_degree)
 
-    name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
+    # initialise buttons
+    ui.Button.init()
+
 
     username = ui.variableText(stat_surf, wheel_aspect[0], 1 * text_gap, text_w, text_h, leetscore.getUsername(), font, "Username")
     easy_qu = ui.variableText(stat_surf, wheel_aspect[0], 2 * text_gap, text_w, text_h, easy, font, "Easy")
@@ -142,7 +117,7 @@ while True:
                                   [Spinner.spin,ui.variableText.processTexts], [spinner, texts[1:], state])
     buttons = ui.Button.getList()
 
-    while state.getState() == States.MAIN:
+    while state.getState() in {States.MAIN, States.SPIN}:
         pygame.display.update()
 
         stat_surf.fill((125, 255, 255))
@@ -210,7 +185,11 @@ while True:
 # 10) update pie chart drawing method to use PIL image with degree based positioning and use image instead O
 # 11) Add wheel object
 # 12) Add colour enums
-
+# 13) Resizable program
+# Variables to maintain after resize
+# spinner current speed
+# spinner current degree
+# current state
 
 #Issue/Improvement 1) ghost shadow on spinner
 
