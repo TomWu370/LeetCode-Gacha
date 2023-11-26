@@ -11,8 +11,8 @@ class States(Enum):
 
 
 class State:
-    def __init__(self):
-        self.__state = States.MAIN
+    def __init__(self, state=States.MAIN):
+        self.__state = state
 
     def setState(self, new_state):
         self.__state = new_state

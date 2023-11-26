@@ -5,16 +5,17 @@ from PIL import Image, ImageDraw
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+
 matplotlib.use("Agg")
 
 import matplotlib.backends.backend_agg as agg
-
 
 import pylab
 import sys
 import math
 import database as db
 import leetscore
+from programManager import Manager
 import ui
 from spinner import Spinner
 from states import States, State
@@ -36,11 +37,15 @@ def getEvents():
     return pygame.event.get()
 
 
-def processEvents(state):
+def processEvents(manager, state):
     for event in getEvents():
         quit(event)
         if event.type == pygame.VIDEORESIZE:
             state.setState(States.RESIZE)
+            manager.changeAspect(event.w, event.h)
+        elif event.type == pygame.VIDEOEXPOSE:
+            state.setState(States.RESIZE)
+            manager.changeAspect(screen.get_size())
 
 
 def quit(action):
@@ -68,15 +73,17 @@ def displayresult(result, font, screen):
     textrect.center = screen.get_rect().center
     screen.blit(textsurface, textrect)
 
+
 # 1 time variables here
 name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
 start_degree = 0
+manager = Manager(current_degree=0, current_velocity=0, current_state=States.MAIN, current_aspect=(1600, 900))
 decisions = ['choice1', 'choice2', 'choice3', 'choice4']
 weights = [1, 1, 1, 4]
 wheel = Wheel(decisions, weights)
 while True:
     # dynamic resolution here
-    aspect = (1600, 900)
+    aspect = manager.getAspect()
     wheel_aspect = (aspect[0] * 0.7, aspect[1])
     text_gap = 50
     text_w = 100
@@ -89,35 +96,36 @@ while True:
     wheel_centre = wheel_surf.get_rect().center
     stat_surf = pygame.Surface(aspect)
 
-    state = State()
-
+    state = State(manager.getState())
 
     num_decisions = len(decisions)
 
-    image = wheel.createWheel(wheel_aspect[0]/100, wheel_aspect[1]/100)
+    image = wheel.createWheel(wheel_aspect[0] / 100, wheel_aspect[1] / 100)
 
     # 5 and 200 are micro adjustments, due to the matplotlib pie not being perfectly centered
-    spinnerPos = (wheel_centre[0]-5, wheel_centre[1]-200)
-    spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.002, starting_degree=start_degree)
+    spinnerPos = (wheel_centre[0] - 5, wheel_centre[1] - 200)
+    spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.002, current_velocity=programManager.getVelocity(),
+                      current_degree=programManager.getDegree())
 
     # initialise buttons
     ui.Button.init()
 
-
-    username = ui.variableText(stat_surf, wheel_aspect[0], 1 * text_gap, text_w, text_h, leetscore.getUsername(), font, "Username")
+    username = ui.variableText(stat_surf, wheel_aspect[0], 1 * text_gap, text_w, text_h, leetscore.getUsername(), font,
+                               "Username")
     easy_qu = ui.variableText(stat_surf, wheel_aspect[0], 2 * text_gap, text_w, text_h, easy, font, "Easy")
     medium_qu = ui.variableText(stat_surf, wheel_aspect[0], 3 * text_gap, text_w, text_h, medium, font, "Medium")
     hard_qu = ui.variableText(stat_surf, wheel_aspect[0], 4 * text_gap, text_w, text_h, hard, font, "Hard")
     currency = ui.variableText(stat_surf, wheel_aspect[0], 5 * text_gap, text_w, text_h, money, font, "Currency")
     texts = ui.Text.getList()
 
-
     refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh",
                                        ui.variableText.processTexts, texts[1:])  # ignore username
     # + 15 on wheel_centre[0] is micro adjustment
-    startButton = ui.CircleButton(wheel_surf, (wheel_centre[0]+15, wheel_centre[1]), 20, 0, font,
-                                  [Spinner.spin,ui.variableText.processTexts], [spinner, texts[1:], state])
+    startButton = ui.CircleButton(wheel_surf, (wheel_centre[0] + 15, wheel_centre[1]), 20, 0, font,
+                                  [Spinner.spin, ui.variableText.processTexts], [spinner, texts[1:], state])
     buttons = ui.Button.getList()
+
+    state.setState(manager.getState())
 
     while state.getState() in {States.MAIN, States.SPIN}:
         pygame.display.update()
@@ -126,9 +134,8 @@ while True:
 
         score = font.render("Score: " + str(money), False, (200, 0, 50))
 
-
         # update spinner with current degree
-        wheel_surf.blit(image, (0,0))
+        wheel_surf.blit(image, (0, 0))
         spinner.drawSpinner()
 
         # render buttons and screen
@@ -138,7 +145,6 @@ while True:
         # Update screen
         screen.blit(stat_surf, (0, 0))
         screen.blit(wheel_surf, (0, 0))
-
 
         match state.getState():
             case States.SPIN:
@@ -152,14 +158,14 @@ while True:
                 degree = spinner.getDegree()
                 for i in range(num_decisions):
                     # if degree within range then announce result
-                    if decision_ranges[i]['start'] < degree < decision_ranges[i]['end']:
+                    if wheel.decision_ranges[i]['start'] < degree < wheel.decision_ranges[i]['end']:
 
                         result = decisions[i]
                         displayresult(result, font, screen)
                         state.setState(States.MAIN)
                         break
 
-                    elif degree in {decision_ranges[i]['start'], decision_ranges[i]['end']}:
+                    elif degree in {wheel.decision_ranges[i]['start'], wheel.decision_ranges[i]['end']}:
                         displayresult('Spinning Again', font, screen)
                         spinner.spin()
                         state.setState(States.SPIN)
@@ -169,7 +175,7 @@ while True:
                 displayresult("Not enough money", font, screen)
                 state.setState(States.MAIN)
 
-        processEvents(state)
+        processEvents(manager, state)
 
 # To Do:
 # 1) Update pointer.png to include button O
@@ -193,7 +199,7 @@ while True:
 # spinner current degree
 # current state
 
-#Issue/Improvement 1) ghost shadow on spinner
+# Issue/Improvement 1) ghost shadow on spinner
 
 # helpful snippets
 # collision detection:
