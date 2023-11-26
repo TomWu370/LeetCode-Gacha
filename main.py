@@ -46,6 +46,7 @@ def processEvents(manager, state):
         elif event.type == pygame.VIDEOEXPOSE:
             state.setState(States.RESIZE)
             manager.changeAspect(screen.get_size())
+            manager.updateSpinner(spinner)
 
 
 def quit(action):
@@ -75,6 +76,8 @@ def displayresult(result, font, screen):
 
 
 # 1 time variables here
+pygame.init()  # Initializing pygame
+font = pygame.font.SysFont(None, 28)
 name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
 start_degree = 0
 manager = Manager(current_degree=0, current_velocity=0, current_state=States.MAIN, current_aspect=(1600, 900))
@@ -88,8 +91,6 @@ while True:
     text_gap = 50
     text_w = 100
     text_h = 20
-    pygame.init()  # Initializing pygame
-    font = pygame.font.SysFont(None, 28)
 
     screen = pygame.display.set_mode(aspect, pygame.RESIZABLE)
     wheel_surf = pygame.Surface(wheel_aspect)
@@ -127,7 +128,7 @@ while True:
 
     state.setState(manager.getState())
 
-    while state.getState() in {States.MAIN, States.SPIN}:
+    while state.getState() != States.RESIZE:
         pygame.display.update()
 
         stat_surf.fill((125, 255, 255))
