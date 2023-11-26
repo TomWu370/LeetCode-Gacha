@@ -97,7 +97,7 @@ for i in range(len(weights)):
     end = start + (weights[i]/total_weight) * 360
 
     decision_ranges[i] = [start, end]
-print(decision_ranges)
+
 ##### create piechart
 
 fig, ax = plt.subplots(1,1, figsize=(wheel_aspect[0]/100, wheel_aspect[1]/100))
@@ -106,7 +106,7 @@ fig, ax = plt.subplots(1,1, figsize=(wheel_aspect[0]/100, wheel_aspect[1]/100))
 plt.pie(weights, labels=decisions, counterclock=False, radius=1.5, startangle=90,  labeldistance=0.7, rotatelabels=270)
 
 ax = fig.gca()
-
+print(3.5 % 4.2)
 canvas = agg.FigureCanvasAgg(fig)
 canvas.draw()
 renderer = canvas.get_renderer()
@@ -120,7 +120,7 @@ image = pygame.image.frombuffer(raw_data, size, "ARGB")
 
 # 5 and 200 are micro adjustments, due to the matplotlib pie not being perfectly centered
 spinnerPos = (wheel_centre[0]-5, wheel_centre[1]-200)
-spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.001)
+spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.002)
 
 name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
 
@@ -173,7 +173,7 @@ while True:
             degree = spinner.getDegree()
             for i in range(num_decisions):
                 # if degree within range then announce result
-                if i * (360 / num_decisions) < degree < (i + 1) * (360 / num_decisions):
+                if decision_ranges[i][0] < degree < decision_ranges[i][1]:
 
                     #print(f'i:', i)
                     result = decisions[i]
@@ -181,7 +181,7 @@ while True:
                     # state.setState(States.MAIN)
                     break
 
-                elif degree % (360 / num_decisions) == 0:
+                elif degree == decision_ranges[i][0] or degree == decision_ranges[i][1]:
                     displayresult('Spinning Again', font, screen)
                     spinner.spin()
                     state.setState(States.SPIN)
