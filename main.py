@@ -71,6 +71,9 @@ def displayresult(result, font, screen):
 # 1 time variables here
 name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
 start_degree = 0
+decisions = ['choice1', 'choice2', 'choice3', 'choice4']
+weights = [1, 1, 1, 4]
+wheel = Wheel(decisions, weights)
 while True:
     # dynamic resolution here
     aspect = (1600, 900)
@@ -88,11 +91,10 @@ while True:
 
     state = State()
 
-    decisions = ['choice1', 'choice2', 'choice3', 'choice4']
-    weights = [1,1,1,4]
+
     num_decisions = len(decisions)
 
-    image = Wheel(decisions, weights, wheel_aspect[0]/100, wheel_aspect[1]/100).wheelImage
+    image = wheel.createWheel(wheel_aspect[0]/100, wheel_aspect[1]/100)
 
     # 5 and 200 are micro adjustments, due to the matplotlib pie not being perfectly centered
     spinnerPos = (wheel_centre[0]-5, wheel_centre[1]-200)

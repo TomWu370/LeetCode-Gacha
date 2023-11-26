@@ -8,13 +8,14 @@ import matplotlib.backends.backend_agg as agg
 
 class Wheel:
 
-    def __init__(self, decisions, weights, width, height):
-        decisions = ['choice1', 'choice2', 'choice3', 'choice4']
-        weights = [1, 1, 1, 4]
+    def __init__(self, decisions, weights):
+        self.decisions = ['choice1', 'choice2', 'choice3', 'choice4']
+        self.weights = [1, 1, 1, 4]
+
         num_decisions = len(decisions)
 
         self.decision_ranges = self.initialiseRanges(weights)
-        self.wheelImage = self.createWheel(decisions, width, height)
+
 
     def initialiseRanges(self, weights):
         decision_ranges = {}
@@ -31,13 +32,13 @@ class Wheel:
             decision_ranges[i] = {"start": start, "end": end}
         return decision_ranges
 
-    def createWheel(self, decisions, width, height):
+    def createWheel(self, width, height):
         ##### create piechart
 
         fig, ax = plt.subplots(1, 1, figsize=(width, height))
 
         # radius of 1.5 fits the screen the best
-        plt.pie(weights, labels=decisions, counterclock=False, radius=1.5, startangle=90, labeldistance=0.7,
+        plt.pie(self.weights, labels=self.decisions, counterclock=False, radius=1.5, startangle=90, labeldistance=0.7,
                 rotatelabels=270)
 
         canvas = agg.FigureCanvasAgg(fig)
