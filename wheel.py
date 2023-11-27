@@ -34,7 +34,7 @@ class Wheel:
 
     def createWheel(self, width, height):
         ##### create piechart
-
+        plt.clf()
         fig, ax = plt.subplots(1, 1, figsize=(width, height))
 
         # radius of 1.5 fits the screen the best

@@ -37,16 +37,23 @@ def getEvents():
     return pygame.event.get()
 
 
-def processEvents(manager, state):
+def processEvents():
     for event in getEvents():
         quit(event)
         if event.type == pygame.VIDEORESIZE:
-            state.setState(States.RESIZE)
-            manager.changeAspect(event.w, event.h)
-        elif event.type == pygame.VIDEOEXPOSE:
-            state.setState(States.RESIZE)
-            manager.changeAspect(screen.get_size())
+            manager.setState(state.getState())
+            manager.setAspect((event.w, event.h))
             manager.updateSpinner(spinner)
+            state.setState(States.RESIZE)
+
+        #detect maximise/minimise
+        elif event.type == pygame.ACTIVEEVENT and event.state == 6:
+            manager.setState(state.getState())
+            manager.setAspect(screen.get_size())
+            manager.updateSpinner(spinner)
+            state.setState(States.RESIZE)
+
+
 
 
 def quit(action):
@@ -99,14 +106,15 @@ while True:
 
     state = State(manager.getState())
 
+
     num_decisions = len(decisions)
 
     image = wheel.createWheel(wheel_aspect[0] / 100, wheel_aspect[1] / 100)
 
     # 5 and 200 are micro adjustments, due to the matplotlib pie not being perfectly centered
     spinnerPos = (wheel_centre[0] - 5, wheel_centre[1] - 200)
-    spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.002, current_velocity=programManager.getVelocity(),
-                      current_degree=programManager.getDegree())
+    spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.002, current_velocity=manager.getVelocity(),
+                      starting_degree=manager.getDegree())
 
     # initialise buttons
     ui.Button.init()
@@ -126,7 +134,7 @@ while True:
                                   [Spinner.spin, ui.variableText.processTexts], [spinner, texts[1:], state])
     buttons = ui.Button.getList()
 
-    state.setState(manager.getState())
+
 
     while state.getState() != States.RESIZE:
         pygame.display.update()
@@ -176,7 +184,7 @@ while True:
                 displayresult("Not enough money", font, screen)
                 state.setState(States.MAIN)
 
-        processEvents(manager, state)
+        processEvents()
 
 # To Do:
 # 1) Update pointer.png to include button O
