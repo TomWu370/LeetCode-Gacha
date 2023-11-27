@@ -136,7 +136,6 @@ while True:
     buttons = ui.Button.getList()
 
 
-
     while state.getState() != States.RESIZE:
         pygame.display.update()
 
