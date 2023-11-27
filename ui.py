@@ -134,6 +134,10 @@ class Text(ABC):
         pass
 
     @classmethod
+    def init(cls):
+        cls.texts = []
+
+    @classmethod
     def getList(cls):
         return cls.texts
 

@@ -118,6 +118,7 @@ while True:
 
     # initialise buttons
     ui.Button.init()
+    ui.Text.init()
 
     username = ui.variableText(stat_surf, wheel_aspect[0], 1 * text_gap, text_w, text_h, leetscore.getUsername(), font,
                                "Username")
