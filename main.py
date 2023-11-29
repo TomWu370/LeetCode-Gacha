@@ -1,6 +1,9 @@
+from configparser import ConfigParser
+
 import pygame
 import sys
 from time import time
+from ast import literal_eval
 import database as db
 import leetscore
 from programManager import Manager
@@ -34,14 +37,12 @@ def processEvents():
             manager.updateSpinner(spinner)
             state.setState(States.RESIZE)
 
-        #detect maximise/minimise
+        # detect maximise/minimise
         elif event.type == pygame.ACTIVEEVENT and event.state == 6:
             manager.setState(state.getState())
             manager.setAspect(screen.get_size())
             manager.updateSpinner(spinner)
             state.setState(States.RESIZE)
-
-
 
 
 def quit(action):
@@ -70,12 +71,30 @@ def displayresult(result, font, screen):
     screen.blit(textsurface, textrect)
 
 
+configs = ConfigParser()
+configs.read("config.ini")
+screen_config = configs['SCREEN_DEFAULT']
+aspect = literal_eval(screen_config['aspect_ratio'])
+text_gap = int(screen_config['text_gap'])
+text_w = int(screen_config['text_width'])
+text_h = int(screen_config['text_height'])
+
+spinner_config = configs['SPINNER_DEFAULT']
+max_v = float(spinner_config['max_velocity'])
+min_v = float(spinner_config['min_velocity'])
+decay = float(spinner_config['speed_decay'])
+clockwise = bool(spinner_config['spin_clockwise'])
+spinner_path = spinner_config['spinner_image_path']
+
+customisation_config = configs['CUSTOMISATION_DEFAULT']
+screen_colours = literal_eval(customisation_config['screen_colours'])
+
 # 1 time variables here
 pygame.init()  # Initializing pygame
 font = pygame.font.SysFont(None, 28)
 name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
 start_degree = 0
-manager = Manager(current_degree=0, current_velocity=0, current_state=States.MAIN, current_aspect=(1600, 900))
+manager = Manager(current_degree=0, current_velocity=0, current_state=States.MAIN, current_aspect=aspect)
 decisions = ['choice1', 'choice2', 'choice3', 'choice4']
 weights = [1, 1, 1, 4]
 wheel = Wheel(decisions, weights)
@@ -83,9 +102,6 @@ while True:
     # dynamic resolution here
     aspect = manager.getAspect()
     wheel_aspect = (aspect[0] * 0.7, aspect[1])
-    text_gap = 50
-    text_w = 100
-    text_h = 20
 
     screen = pygame.display.set_mode(aspect, pygame.RESIZABLE)
     wheel_surf = pygame.Surface(wheel_aspect)
@@ -94,15 +110,12 @@ while True:
 
     state = State(manager.getState())
 
-
-    num_decisions = len(decisions)
-
-    image = wheel.createWheel(wheel_aspect[0] / 100, wheel_aspect[1] / 100)
+    wheel_rect = wheel.createWheel(wheel_aspect[0] / 100, wheel_aspect[1] / 100)
 
     # 5 and 200 are micro adjustments, due to the matplotlib pie not being perfectly centered
     spinnerPos = (wheel_centre[0] - 5, wheel_centre[1] - 200)
-    spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.004, current_velocity=manager.getVelocity(),
-                      starting_degree=manager.getDegree())
+    spinner = Spinner(wheel_surf, spinner_path, spinnerPos, max_v, min_v, decay, current_velocity=manager.getVelocity(),
+                      starting_degree=manager.getDegree(), clockwise=clockwise)
 
     # initialise buttons
     ui.Button.init()
@@ -123,16 +136,13 @@ while True:
                                   [Spinner.spin, ui.variableText.processTexts], [spinner, texts[1:], state])
     buttons = ui.Button.getList()
 
-
     while state.getState() != States.RESIZE:
         pygame.display.update()
 
-        stat_surf.fill((125, 255, 255))
-
-        score = font.render("Score: " + str(money), False, (200, 0, 50))
+        stat_surf.fill(screen_colours['stat_background'])
 
         # update spinner with current degree
-        wheel_surf.blit(image, (0, 0))
+        wheel_surf.blit(wheel_rect, (0, 0))
         spinner.drawSpinner()
 
         # render buttons and screen
@@ -153,7 +163,7 @@ while True:
 
             case States.RESULT:
                 degree = spinner.getDegree()
-                for i in range(num_decisions):
+                for i in range(len(decisions)):
                     # if degree within range then announce result
                     if wheel.decision_ranges[i]['start'] < degree < wheel.decision_ranges[i]['end']:
 
@@ -170,7 +180,6 @@ while True:
             case States.INSUFFICIENT:
                 # when not enough money to spin
                 displayresult("Not enough money", font, screen)
-                #state.setState(States.MAIN)
 
         processEvents()
 

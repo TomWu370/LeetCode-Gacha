@@ -12,10 +12,7 @@ class Wheel:
         self.decisions = ['choice1', 'choice2', 'choice3', 'choice4']
         self.weights = [1, 1, 1, 4]
 
-        num_decisions = len(decisions)
-
         self.decision_ranges = self.initialiseRanges(weights)
-
 
     def initialiseRanges(self, weights):
         decision_ranges = {}
