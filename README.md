@@ -14,4 +14,5 @@ To use:
 
 
 Project Structure:
-![Structure](https://github.com/TomWu370/LeetCode-Gacha/assets/75613334/5996ebe0-7c0a-4a59-be67-80a94a6b4ff2)
+![structure](https://github.com/TomWu370/LeetCode-Gacha/assets/75613334/c292acf2-f0de-41f4-97c8-31f28ea38767)
+
