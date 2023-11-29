@@ -1,21 +1,22 @@
 import pygame
 import matplotlib
 from matplotlib import pyplot as plt
+import matplotlib.backends.backend_agg as agg
 
 matplotlib.use("Agg")
-import matplotlib.backends.backend_agg as agg
+matplotlib.rcParams['font.size'] = 14.0
 
 
 class Wheel:
 
     def __init__(self, decisions, weights):
-        self.decisions = ['choice1', 'choice2', 'choice3', 'choice4']
-        self.weights = [1, 1, 1, 4]
+        self.decisions = decisions
+        self.weights = weights
 
-        self.decision_ranges = self.initialiseRanges(weights)
+        self.decision_ranges = {}
+        self.initialiseRanges(weights)
 
     def initialiseRanges(self, weights):
-        decision_ranges = {}
         total_weight = sum(weights)
 
         for i in range(len(weights)):
@@ -23,20 +24,20 @@ class Wheel:
             if i == 0:
                 start = 0
             else:
-                start = decision_ranges[i - 1]['end']
+                start = self.decision_ranges[i - 1]['end']
             end = start + (weights[i] / total_weight) * 360
 
-            decision_ranges[i] = {"start": start, "end": end}
-        return decision_ranges
+            self.decision_ranges[i] = {"start": start, "end": end}
+        return self.decision_ranges
 
     def createWheel(self, width, height):
-        ##### create piechart
+        # create piechart
         plt.clf()
         fig, ax = plt.subplots(1, 1, figsize=(width, height))
 
         # radius of 1.5 fits the screen the best
         plt.pie(self.weights, labels=self.decisions, counterclock=False, radius=1.5, startangle=90, labeldistance=0.7,
-                rotatelabels=270)
+                rotatelabels=True)
 
         canvas = agg.FigureCanvasAgg(fig)
         canvas.draw()
@@ -46,3 +47,6 @@ class Wheel:
 
         image = pygame.image.frombuffer(raw_data, size, "ARGB")
         return image
+
+    def getRanges(self):
+        return self.decision_ranges

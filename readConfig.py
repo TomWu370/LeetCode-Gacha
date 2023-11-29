@@ -1,5 +1,6 @@
 from ast import literal_eval
 from configparser import ConfigParser
+import pandas as pd
 
 config = ConfigParser()
 config.read("config.ini")
@@ -18,8 +19,8 @@ def readScreenDefault():
 
 def readWheelDefault():
     configs = config['WHEEL_DEFAULT']
-    return {'easy_point': configs['easy_point'], 'medium_point': configs['medium_point'],
-            'hard_point': configs['hard_point'], 'cost': configs['cos']}
+    return {'easy_point': float(configs['easy_point']), 'medium_point': float(configs['medium_point']),
+            'hard_point': float(configs['hard_point']), 'cost': float(configs['cost'])}
 
 
 def readSpinnerDefault():
@@ -27,6 +28,12 @@ def readSpinnerDefault():
     return float(configs['max_velocity']), float(configs['min_velocity']), float(configs['speed_decay']), \
            float(configs['start_degree']), bool(configs['spin_clockwise']), configs['spinner_image_path']
 
+
 def readCustomisationDefault():
     configs = config['CUSTOMISATION_DEFAULT']
     return literal_eval(configs['screen_colours'])
+
+
+def readRates():
+    df = pd.read_csv('rates.txt')
+    return df['choice'].tolist(), df['weight'].tolist()

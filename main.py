@@ -1,9 +1,6 @@
 import pygame
-import sys
 from time import time
-from readConfig import readScreenDefault, readSpinnerDefault, readCustomisationDefault
-import database as db
-import leetscore
+from readConfig import readScreenDefault, readSpinnerDefault, readCustomisationDefault, readRates
 from programManager import Manager
 import ui
 from spinner import Spinner
@@ -11,75 +8,18 @@ from states import States, State
 from wheel import Wheel
 
 
-# api
-# top bar showcasing currency
-# database to record
-
-def startUp():
-    # get initial data
-    username = leetscore.getUsername()
-    data, gold = db.refresh()
-    return username, data['easy'], data['medium'], data['hard'], gold
-
-
-def getEvents():
-    return pygame.event.get()
-
-
-def processEvents():
-    for event in getEvents():
-        quit(event)
-        if event.type == pygame.VIDEORESIZE:
-            manager.setState(state.getState())
-            manager.setAspect((event.w, event.h))
-            manager.updateSpinner(spinner)
-            state.setState(States.RESIZE)
-
-        # detect maximise/minimise
-        elif event.type == pygame.ACTIVEEVENT and event.state == 6:
-            manager.setState(state.getState())
-            manager.setAspect(screen.get_size())
-            manager.updateSpinner(spinner)
-            state.setState(States.RESIZE)
-
-
-def quit(action):
-    # temporary code reduction, before utilising partial screen refresh
-    # pygame.display.update()  # Redraw screen when no argument
-    # pass (start_x, start_y, width, height) to redraw portion of screen
-    if action.type == pygame.QUIT:
-        pygame.quit()
-        sys.exit()
-
-
-def renderButtons(objects):
-    for button in objects:
-        button.process()
-
-
-def renderTexts(objects):
-    for text in objects:
-        text.process()
-
-
-def displayresult(result, font, screen):
-    textsurface = font.render(result, True, (0, 255, 0))
-    textrect = textsurface.get_rect()
-    textrect.center = screen.get_rect().center
-    screen.blit(textsurface, textrect)
-
 
 # Initialisation for pygame
 pygame.init()
 font = pygame.font.SysFont(None, 28)
 
 # variable fetching/reading
-name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
+name, easy, medium, hard, money = Manager.startUp()  # overhead of 2-3 seconds from leetcode api
 aspect, text_gap, text_w, text_h = readScreenDefault()
 max_v, min_v, decay, start_degree, clockwise, spinner_path = readSpinnerDefault()
 screen_colours = readCustomisationDefault()
-decisions = ['choice1', 'choice2', 'choice3', 'choice4']
-weights = [1, 1, 1, 4]
+decisions, weights = readRates()
+
 
 # useful object declaration
 manager = Manager(current_degree=start_degree, current_velocity=0, current_state=States.MAIN, current_aspect=aspect)
@@ -131,8 +71,8 @@ while True:
         spinner.drawSpinner()
 
         # render buttons and screen
-        renderTexts(texts)
-        renderButtons(buttons)
+        manager.renderTexts(texts)
+        manager.renderButtons(buttons)
 
         # Update screen
         screen.blit(stat_surf, (0, 0))
@@ -150,23 +90,23 @@ while True:
                 degree = spinner.getDegree()
                 for i in range(len(decisions)):
                     # if degree within range then announce result
-                    if wheel.decision_ranges[i]['start'] < degree < wheel.decision_ranges[i]['end']:
+                    if wheel.getRanges()[i]['start'] < degree < wheel.getRanges()[i]['end']:
 
                         result = decisions[i]
-                        displayresult(result, font, screen)
+                        manager.displayresult(result, font, screen, screen_colours['result_text'])
                         break
 
-                    elif degree in {wheel.decision_ranges[i]['start'], wheel.decision_ranges[i]['end']}:
-                        displayresult('Spinning Again', font, screen)
+                    elif degree in {wheel.getRanges()[i]['start'], wheel.getRanges()[i]['end']}:
+                        manager.displayresult('Spinning Again', font, screen, screen_colours['retry_text'])
                         time.sleep(1)
                         spinner.spin()
                         state.setState(States.SPIN)
                         break
             case States.INSUFFICIENT:
                 # when not enough money to spin
-                displayresult("Not enough money", font, screen)
+                manager.displayresult("Not enough money", font, screen, screen_colours['insufficient_text'])
 
-        processEvents()
+        manager.processEvents(screen, state, spinner)
 
 # To Do:
 # 1) Update pointer.png to include button O
@@ -182,13 +122,10 @@ while True:
 # firstly create a large screen, then define wheel surface and stat surface separately O
 # modify rectangular button class to not create new surface but rather print on existing surface like circular button O
 # 10) update pie chart drawing method to use PIL image with degree based positioning and use image instead O
-# 11) Add wheel object
-# 12) Add colour enums
-# 13) Resizable program
-# Variables to maintain after resize
-# spinner current speed
-# spinner current degree
-# current state
+# 11) Add wheel object O
+# 12) Add colour enums Not needed
+# 13) Resizable program O
+
 
 # Issue/Improvement 1) ghost shadow on spinner
 

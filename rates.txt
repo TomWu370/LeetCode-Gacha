@@ -1,0 +1,5 @@
+choice,weight
+choice 1,1
+choice 2,2
+choice 3,2
+choice 4,4
