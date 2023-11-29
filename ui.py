@@ -39,7 +39,7 @@ class RectangleButton(Button):
         self.buttonDim = None
 
         self.fillColors = {
-            'normal': '#333333',
+            'normal': '#ffffff',
             'hover': '#666666',
             'pressed': '#333333',
         }
@@ -59,10 +59,10 @@ class RectangleButton(Button):
             else:
                 self.buttonDim = rect(self.screen, self.fillColors['pressed'], self.rect, 0)
                 if self.onePress:
-                    self.onclickFunction(self, self.functionArgument)
+                    self.onclickFunction(self.functionArgument)
                 elif not self.alreadyPressed:
-                    self.onclickFunction(self, self.functionArgument)
                     self.alreadyPressed = True
+                    self.onclickFunction(self.functionArgument)
         if self.textSurf:
             textrect = self.textSurf.get_rect()
             textrect.center = self.rect.center
@@ -119,10 +119,11 @@ class CircleButton(Button):
                     elif not database.spend():
                         self.state.setState(States.INSUFFICIENT)
                     else:
-                        self.spin(self.spinner)
-                        self.refresh(self, self.texts)
-                        self.state.setState(States.SPIN)
                         if not self.alreadyPressed: self.alreadyPressed = True
+                        self.spin(self.spinner)
+                        self.refresh(self.texts)
+                        self.state.setState(States.SPIN)
+
 
 
 class Text(ABC):
@@ -172,3 +173,6 @@ class variableText(Text):
         for i in range(len(variables)):
             variables[i].updateVariable(data[i])
 
+
+def buttonAction(*args):
+    print(database.read())

@@ -1,5 +1,6 @@
-import leetcode
+import importlib
 from readConfig import readDefault
+leetcode = importlib.import_module('python-leetcode')
 
 DIFFICULTY = {1: 'easy',
               2: 'medium',

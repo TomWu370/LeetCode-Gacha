@@ -1,7 +1,7 @@
 import sqlite3
-import leetscore
+import importlib
 from readConfig import readWheelDefault
-
+leetcode = importlib.import_module('python-leetcode')
 reward_config = readWheelDefault()
 
 connection = sqlite3.connect("database.db")

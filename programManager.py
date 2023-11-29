@@ -3,7 +3,8 @@ import sys
 import pygame
 from states import States
 import database as db
-import leetscore
+import importlib
+leetcode = importlib.import_module('python-leetcode')
 
 
 class Manager:
