@@ -1,9 +1,7 @@
-from configparser import ConfigParser
-
 import pygame
 import sys
 from time import time
-from ast import literal_eval
+from readConfig import readScreenDefault, readSpinnerDefault, readCustomisationDefault
 import database as db
 import leetscore
 from programManager import Manager
@@ -71,32 +69,20 @@ def displayresult(result, font, screen):
     screen.blit(textsurface, textrect)
 
 
-configs = ConfigParser()
-configs.read("config.ini")
-screen_config = configs['SCREEN_DEFAULT']
-aspect = literal_eval(screen_config['aspect_ratio'])
-text_gap = int(screen_config['text_gap'])
-text_w = int(screen_config['text_width'])
-text_h = int(screen_config['text_height'])
-
-spinner_config = configs['SPINNER_DEFAULT']
-max_v = float(spinner_config['max_velocity'])
-min_v = float(spinner_config['min_velocity'])
-decay = float(spinner_config['speed_decay'])
-clockwise = bool(spinner_config['spin_clockwise'])
-spinner_path = spinner_config['spinner_image_path']
-
-customisation_config = configs['CUSTOMISATION_DEFAULT']
-screen_colours = literal_eval(customisation_config['screen_colours'])
-
-# 1 time variables here
-pygame.init()  # Initializing pygame
+# Initialisation for pygame
+pygame.init()
 font = pygame.font.SysFont(None, 28)
+
+# variable fetching/reading
 name, easy, medium, hard, money = startUp()  # overhead of 2-3 seconds
-start_degree = 0
-manager = Manager(current_degree=0, current_velocity=0, current_state=States.MAIN, current_aspect=aspect)
+aspect, text_gap, text_w, text_h = readScreenDefault()
+max_v, min_v, decay, start_degree, clockwise, spinner_path = readSpinnerDefault()
+screen_colours = readCustomisationDefault()
 decisions = ['choice1', 'choice2', 'choice3', 'choice4']
 weights = [1, 1, 1, 4]
+
+# useful object declaration
+manager = Manager(current_degree=start_degree, current_velocity=0, current_state=States.MAIN, current_aspect=aspect)
 wheel = Wheel(decisions, weights)
 while True:
     # dynamic resolution here
@@ -121,8 +107,7 @@ while True:
     ui.Button.init()
     ui.Text.init()
 
-    username = ui.variableText(stat_surf, wheel_aspect[0], 1 * text_gap, text_w, text_h, leetscore.getUsername(), font,
-                               "Username")
+    username = ui.variableText(stat_surf, wheel_aspect[0], 1 * text_gap, text_w, text_h, name, font, "Username")
     easy_qu = ui.variableText(stat_surf, wheel_aspect[0], 2 * text_gap, text_w, text_h, easy, font, "Easy")
     medium_qu = ui.variableText(stat_surf, wheel_aspect[0], 3 * text_gap, text_w, text_h, medium, font, "Medium")
     hard_qu = ui.variableText(stat_surf, wheel_aspect[0], 4 * text_gap, text_w, text_h, hard, font, "Hard")

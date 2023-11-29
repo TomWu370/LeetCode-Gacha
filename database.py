@@ -1,10 +1,8 @@
 import sqlite3
 import leetscore
-from configparser import ConfigParser
+from readConfig import readWheelDefault
 
-reward_config = ConfigParser()
-reward_config.read("config.ini")
-reward_config = reward_config['WHEEL_DEFAULT']
+reward_config = readWheelDefault()
 
 connection = sqlite3.connect("database.db")
 # allows return rows to be converted to dictionary
@@ -62,9 +60,9 @@ def resetUsed(used=0):
 
 def spend():
     rows = read()
-    usable,_ = getUsable(rows)
-    if usable >= int(reward_config['cost'] * 1):
-        used = int(reward_config['cost'] * 1)  # 1 equal to amount
+    usable, _ = getUsable(rows)
+    if usable >= reward_config['cost'] * 1:
+        used = reward_config['cost'] * 1  # 1 equal to amount
         update(rows, used, rows)
         return True
     else:
@@ -75,9 +73,9 @@ def spend():
 def getUsable(rows=None):
     if not rows:
         rows = read()
-    total = (rows['easy'] * int(reward_config['easy_point'])) + \
-            (rows['medium'] * int(reward_config['medium_point'])) + \
-            (rows['hard'] * int(reward_config['hard_point']))
+    total = (rows['easy'] * reward_config['easy_point']) + \
+            (rows['medium'] * reward_config['medium_point']) + \
+            (rows['hard'] * reward_config['hard_point'])
     usable = total - rows['used']
     return usable, rows
 
@@ -88,7 +86,7 @@ def refresh():
     update(data, rows=rows)
     return data, usable
 
-#resetUsed()
+resetUsed()
 #data = {'easy': 2, 'medium': 2, 'hard': 4}
 # data2 = {'easy': 5, 'medium': 2, 'hard': 4}
 # # initialise
