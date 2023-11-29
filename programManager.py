@@ -1,8 +1,6 @@
 # this class will store and manage runtime variables
 import sys
-
 import pygame
-
 from states import States
 import database as db
 import leetscore
@@ -33,11 +31,11 @@ class Manager:
             text.process()
 
     @staticmethod
-    def displayresult(result, font, screen, colour=(0, 0, 0)):
-        textsurface = font.render(result, True, colour)
-        textrect = textsurface.get_rect()
-        textrect.center = screen.get_rect().center
-        screen.blit(textsurface, textrect)
+    def displayResult(result, font, screen, colour=(0, 0, 0)):
+        textSurface = font.render(result, True, colour)
+        textRect = textSurface.get_rect()
+        textRect.center = screen.get_rect().center
+        screen.blit(textSurface, textRect)
 
     def processEvents(self, screen, state, spinner):
         for event in pygame.event.get():

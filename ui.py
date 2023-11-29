@@ -164,13 +164,11 @@ class variableText(Text):
         self.variable = newValue
         self.textSurf = self.font.render((self.buttonText + ": " + str(newValue)), True, (20, 20, 20))
 
-    def processTexts(self, variables):
+    @staticmethod
+    def processTexts(variables):
         data, usable = database.refresh()
         data = list(data.values())
         data.append(usable)
         for i in range(len(variables)):
             variables[i].updateVariable(data[i])
 
-
-def buttonAction(*args):
-    print(database.read())

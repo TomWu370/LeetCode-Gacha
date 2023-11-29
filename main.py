@@ -7,8 +7,6 @@ from spinner import Spinner
 from states import States, State
 from wheel import Wheel
 
-
-
 # Initialisation for pygame
 pygame.init()
 font = pygame.font.SysFont(None, 28)
@@ -66,11 +64,11 @@ while True:
 
         stat_surf.fill(screen_colours['stat_background'])
 
-        # update spinner with current degree
+        # render and update spinner with current degree
         wheel_surf.blit(wheel_rect, (0, 0))
         spinner.drawSpinner()
 
-        # render buttons and screen
+        # render buttons
         manager.renderTexts(texts)
         manager.renderButtons(buttons)
 
@@ -82,8 +80,7 @@ while True:
             case States.SPIN:
                 spinner.rotateSpinner()
                 if spinner.isStop():
-                    # announce result
-                    # state = RESULT  # change screen
+                    # change screen
                     state.setState(States.RESULT)
 
             case States.RESULT:
@@ -91,40 +88,22 @@ while True:
                 for i in range(len(decisions)):
                     # if degree within range then announce result
                     if wheel.getRanges()[i]['start'] < degree < wheel.getRanges()[i]['end']:
-
+                        # announce result
                         result = decisions[i]
-                        manager.displayresult(result, font, screen, screen_colours['result_text'])
+                        manager.displayResult(result, font, screen, screen_colours['result_text'])
                         break
 
                     elif degree in {wheel.getRanges()[i]['start'], wheel.getRanges()[i]['end']}:
-                        manager.displayresult('Spinning Again', font, screen, screen_colours['retry_text'])
+                        manager.displayResult('Spinning Again', font, screen, screen_colours['retry_text'])
                         time.sleep(1)
                         spinner.spin()
                         state.setState(States.SPIN)
                         break
             case States.INSUFFICIENT:
                 # when not enough money to spin
-                manager.displayresult("Not enough money", font, screen, screen_colours['insufficient_text'])
+                manager.displayResult("Not enough money", font, screen, screen_colours['insufficient_text'])
 
         manager.processEvents(screen, state, spinner)
-
-# To Do:
-# 1) Update pointer.png to include button O
-# 2) Add leetcode integration and database for currency O
-# 3) Add respin logic O
-# 4) when spinning disable respin O
-# 5) Update ui to include values and username O
-# 6) Update spinner,py to verify current currency amount before spinning, otherwise return insufficient balance O
-# 7) To verify, modify database.py to return true or false, then add boolean check to spinner.py O
-# 8) Modify main.py and spinner.py and ui.py to shift state changing to spinner.py spin(), O
-#    then pass state object to spinner
-# 9) separate screen and stat_surf O
-# firstly create a large screen, then define wheel surface and stat surface separately O
-# modify rectangular button class to not create new surface but rather print on existing surface like circular button O
-# 10) update pie chart drawing method to use PIL image with degree based positioning and use image instead O
-# 11) Add wheel object O
-# 12) Add colour enums Not needed
-# 13) Resizable program O
 
 
 # Issue/Improvement 1) ghost shadow on spinner

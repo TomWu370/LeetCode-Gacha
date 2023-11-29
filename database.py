@@ -5,6 +5,7 @@ from readConfig import readWheelDefault
 reward_config = readWheelDefault()
 
 connection = sqlite3.connect("database.db")
+
 # allows return rows to be converted to dictionary
 connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
@@ -86,41 +87,7 @@ def refresh():
     update(data, rows=rows)
     return data, usable
 
-resetUsed()
-#data = {'easy': 2, 'medium': 2, 'hard': 4}
-# data2 = {'easy': 5, 'medium': 2, 'hard': 4}
-# # initialise
-# cursor.execute(
-#     "UPDATE leetData SET easy = ?, medium = ?, hard = ?, used = ? WHERE username = ?",
-#     (data['easy'], data['medium'], data['hard'], 0, USER))
-# connection.commit()
-# print(f'read: ',read())
-# print(f'money start: ', getUsable())
-# print(f'read: ',read())
-# set(dat, 0)
-# print(f'read: ', read())
-# spend()
-# print(f'spend 1: ', getUsable())
-# spend()
-# print(f'spend 2: ', getUsable())
-# spend()
-# print(f'spend 3: ', getUsable())
-# spend()
-# print(f'spend 4: ', getUsable())
-# spend()
-# print(f'spend 5: ', getUsable())
-# update(data2)
-# print(f'update 1: ', getUsable())
-# spend()
-# print(f'spend 6: ', getUsable())
-# print(f'money end: ', getUsable())
 
-# test cases
-# new to leetcode, database should be 0,0,0,0
-# experienced, but no spending 3,4,5,0
-# experienced, 2,3,4,1000
-# buying when have enough
-# buying when not enough
-# when buying always update
-# when pressing update button, update
-# on startup update
+if __name__ == '__main__':
+    # run this file to reset currency
+    resetUsed()

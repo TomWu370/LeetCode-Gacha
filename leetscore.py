@@ -1,12 +1,9 @@
-from configparser import ConfigParser
 import leetcode
 from readConfig import readDefault
-
 
 DIFFICULTY = {1: 'easy',
               2: 'medium',
               3: 'hard'}
-
 
 leetcode_session, csrf_token = readDefault()
 
@@ -41,7 +38,7 @@ def getUsername():
 
 
 def getQuestions():
-    # print all solved algorithm questions, fetch solved questions along with difficulty
+    # fetch solved questions along with difficulty
     api_response = api_instance.api_problems_topic_get(topic="all")
     solved_questions = {'easy': 0, 'medium': 0, 'hard': 0}
 
