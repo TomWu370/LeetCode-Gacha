@@ -1,18 +1,6 @@
 import pygame
-from matplotlib import pyplot as plt
-from pygame import gfxdraw
-from PIL import Image, ImageDraw
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
-
-matplotlib.use("Agg")
-
-import matplotlib.backends.backend_agg as agg
-
-import pylab
 import sys
-import math
+from time import time
 import database as db
 import leetscore
 from programManager import Manager
@@ -113,7 +101,7 @@ while True:
 
     # 5 and 200 are micro adjustments, due to the matplotlib pie not being perfectly centered
     spinnerPos = (wheel_centre[0] - 5, wheel_centre[1] - 200)
-    spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.002, current_velocity=manager.getVelocity(),
+    spinner = Spinner(wheel_surf, "pointer.png", spinnerPos, 3, 1, 0.004, current_velocity=manager.getVelocity(),
                       starting_degree=manager.getDegree())
 
     # initialise buttons
@@ -171,18 +159,18 @@ while True:
 
                         result = decisions[i]
                         displayresult(result, font, screen)
-                        state.setState(States.MAIN)
                         break
 
                     elif degree in {wheel.decision_ranges[i]['start'], wheel.decision_ranges[i]['end']}:
                         displayresult('Spinning Again', font, screen)
+                        time.sleep(1)
                         spinner.spin()
                         state.setState(States.SPIN)
                         break
             case States.INSUFFICIENT:
                 # when not enough money to spin
                 displayresult("Not enough money", font, screen)
-                state.setState(States.MAIN)
+                #state.setState(States.MAIN)
 
         processEvents()
 
