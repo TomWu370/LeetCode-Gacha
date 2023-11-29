@@ -7,4 +7,11 @@ The purpose of this program is to encourage users to complete more questions via
 To use:
 1) Update the config.ini with your LeetCode session cookies
 2) Update rates.ini to change your roulette rates and values
-3) Run main.py from console or main.exe from release download
+3) Run main.py from the console or main.exe from release download
+4) Press the circle button in the middle of the wheel to start
+![start](https://github.com/TomWu370/LeetCode-Gacha/assets/75613334/26cb033f-b322-4932-aae0-9d9f726750c3)
+
+
+
+Project Structure:
+![Structure](https://github.com/TomWu370/LeetCode-Gacha/assets/75613334/5996ebe0-7c0a-4a59-be67-80a94a6b4ff2)
