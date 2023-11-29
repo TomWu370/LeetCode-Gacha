@@ -16,3 +16,7 @@ To use:
 Project Structure:
 ![structure](https://github.com/TomWu370/LeetCode-Gacha/assets/75613334/c292acf2-f0de-41f4-97c8-31f28ea38767)
 
+
+
+Further Improvement:
+When the spinner rotates, it reflects a ghost image of itself by 180 degrees, the cause is unknown, but likely due to pygame layers
