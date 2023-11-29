@@ -9,7 +9,8 @@ To use:
 2) Update rates.ini to change your roulette rates and values
 3) Run main.py from the console or main.exe from release download
 4) Press the circle button in the middle of the wheel to start
-![start](https://github.com/TomWu370/LeetCode-Gacha/assets/75613334/26cb033f-b322-4932-aae0-9d9f726750c3)
+![start](https://github.com/TomWu370/LeetCode-Gacha/assets/75613334/0eae6e79-2ff3-42a2-be87-88301aed3979)
+
 
 
 
