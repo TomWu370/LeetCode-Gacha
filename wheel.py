@@ -36,7 +36,7 @@ class Wheel:
         fig, ax = plt.subplots(1, 1, figsize=(width, height))
 
         # radius of 1.5 fits the screen the best
-        plt.pie(self.weights, labels=self.decisions, counterclock=False, radius=1.5, startangle=90, labeldistance=0.7,
+        plt.pie(self.weights, labels=self.decisions, counterclock=False, radius=1.5, startangle=90, labeldistance=0.3,
                 rotatelabels=True)
 
         canvas = agg.FigureCanvasAgg(fig)
