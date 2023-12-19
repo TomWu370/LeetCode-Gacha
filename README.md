@@ -15,7 +15,8 @@ To use:
 
 
 Project Structure:
-![structure](https://github.com/TomWu370/LeetCode-Gacha/assets/75613334/c292acf2-f0de-41f4-97c8-31f28ea38767)
+![Gacha](https://github.com/TomWu370/LeetCode-Gacha/assets/75613334/710e7258-a50c-4b26-9c1d-bc2683adfc45)
+
 
 
 To build an executable yourself:
