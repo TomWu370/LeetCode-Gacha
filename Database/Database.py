@@ -83,8 +83,8 @@ def getUsable(rows=None):
 
 def refresh():
     data = Leetscore.getQuestions()
-    usable, rows = getUsable()
-    update(data, rows=rows)
+    update(data)
+    usable, _ = getUsable()
     return data, usable
 
 

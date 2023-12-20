@@ -22,7 +22,6 @@ max_v, min_v, decay, start_degree, clockwise, spinner_path = readSpinnerDefault(
 screen_colours = readCustomisationDefault()
 decisions, weights = readRates()
 
-
 # useful object declaration
 manager = Manager(current_degree=start_degree, current_velocity=0, current_state=StateType.MAIN, current_aspect=aspect)
 wheel = Wheel(decisions, weights)
@@ -57,10 +56,10 @@ while True:
     texts = Text.getList()
 
     refreshButton = RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh",
-                                       VariableText.processTexts, texts[1:])  # ignore username
+                                    VariableText.processTexts, texts[1:])  # ignore username
     # + 15 on wheel_centre[0] is micro adjustment
     startButton = CircleButton(wheel_surf, (wheel_centre[0] + 15, wheel_centre[1]), 20, 0, font,
-                                  [Spinner.spin, VariableText.processTexts], [spinner, texts[1:], state])
+                               [Spinner.spin, VariableText.processTexts], [spinner, texts[1:], state])
     buttons = Button.getList()
 
     while state.getState() != StateType.RESIZE:
@@ -108,7 +107,6 @@ while True:
                 manager.displayResult("Not enough money", font, screen, screen_colours['insufficient_text'])
 
         manager.processEvents(screen, state, spinner)
-
 
 # Issue/Improvement 1) ghost shadow on spinner
 
