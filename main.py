@@ -2,8 +2,11 @@ import pygame
 from time import time
 from ProgramUtil.ReadConfig import readScreenDefault, readSpinnerDefault, readCustomisationDefault, readRates
 from ProgramUtil.ProgramManager import Manager
-from UI.Button import Button, CircleButton, RectangleButton
-from UI.Text import Text, VariableText
+from UI.Button.Button import Button
+from UI.Button.CircleButton import CircleButton
+from UI.Button.RectangleButton import RectangleButton
+from UI.Text.Text import Text
+from UI.Text.VariableText import VariableText
 from Wheel.Spinner import Spinner
 from ProgramUtil.States import StateType, State
 from Wheel.WheelBody import Wheel

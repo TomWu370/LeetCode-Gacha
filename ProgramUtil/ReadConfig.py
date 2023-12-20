@@ -1,12 +1,17 @@
+import os
 from ast import literal_eval
 from configparser import ConfigParser
 import pandas as pd
 
 config = ConfigParser()
-config.read("config.ini")
+config.read("./config.ini")
+
+files = [f for f in os.listdir('.') if os.path.isfile(f)]
+print(files)
 
 
 def readDefault():
+    print(config)
     configs = config['DEFAULT']
     return configs['session_cookie'], configs['csrf_token']
 
@@ -35,5 +40,5 @@ def readCustomisationDefault():
 
 
 def readRates():
-    df = pd.read_csv('../rates.txt')
+    df = pd.read_csv('./rates.txt')
     return df['choice'].tolist(), df['weight'].tolist()

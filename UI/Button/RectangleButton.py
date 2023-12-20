@@ -1,6 +1,7 @@
-from UI.Button import Button
+from UI.Button.Button import Button
 import pygame
-from pygame import rect
+from pygame.draw import rect
+
 
 class RectangleButton(Button):
     def __init__(self, screen, x, y, width, height, font, buttonText=None, onclickFunction=None, functionArgument=None,
@@ -24,7 +25,6 @@ class RectangleButton(Button):
 
     def process(self):
         mousePos = pygame.mouse.get_pos()
-
         self.buttonDim = rect(self.screen, self.fillColors['normal'], self.rect, 0)
 
         if self.buttonDim.collidepoint(mousePos):

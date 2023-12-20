@@ -25,7 +25,7 @@ class VariableText(Text):
 
     @staticmethod
     def processTexts(variables):
-        data, usable = database.refresh()
+        data, usable = Database.refresh()
         data = list(data.values())
         data.append(usable)
         for i in range(len(variables)):
