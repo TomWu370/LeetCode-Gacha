@@ -2,7 +2,7 @@ import pygame
 from time import time
 from readConfig import readScreenDefault, readSpinnerDefault, readCustomisationDefault, readRates
 from programManager import Manager
-import ui
+from UI import ui
 from spinner import Spinner
 from states import States, State
 from wheel import Wheel
