@@ -1,12 +1,12 @@
 import pygame
 from time import time
-from readConfig import readScreenDefault, readSpinnerDefault, readCustomisationDefault, readRates
-from programManager import Manager
+from ProgramUtil.ReadConfig import readScreenDefault, readSpinnerDefault, readCustomisationDefault, readRates
+from ProgramUtil.ProgramManager import Manager
 from UI.Button import Button, CircleButton, RectangleButton
 from UI.Text import Text, VariableText
-from spinner import Spinner
-from states import States, State
-from wheel import Wheel
+from Wheel.Spinner import Spinner
+from ProgramUtil.States import StateType, State
+from Wheel.WheelBody import Wheel
 
 # Initialisation for pygame
 pygame.init()
@@ -21,7 +21,7 @@ decisions, weights = readRates()
 
 
 # useful object declaration
-manager = Manager(current_degree=start_degree, current_velocity=0, current_state=States.MAIN, current_aspect=aspect)
+manager = Manager(current_degree=start_degree, current_velocity=0, current_state=StateType.MAIN, current_aspect=aspect)
 wheel = Wheel(decisions, weights)
 while True:
     # dynamic resolution here
@@ -60,7 +60,7 @@ while True:
                                   [Spinner.spin, VariableText.processTexts], [spinner, texts[1:], state])
     buttons = Button.getList()
 
-    while state.getState() != States.RESIZE:
+    while state.getState() != StateType.RESIZE:
         pygame.display.update()
 
         stat_surf.fill(screen_colours['stat_background'])
@@ -78,13 +78,13 @@ while True:
         screen.blit(wheel_surf, (0, 0))
 
         match state.getState():
-            case States.SPIN:
+            case StateType.SPIN:
                 spinner.rotateSpinner()
                 if spinner.isStop():
                     # change screen
-                    state.setState(States.RESULT)
+                    state.setState(StateType.RESULT)
 
-            case States.RESULT:
+            case StateType.RESULT:
                 degree = spinner.getDegree()
                 for i in range(len(decisions)):
                     # if degree within range then announce result
@@ -98,9 +98,9 @@ while True:
                         manager.displayResult('Spinning Again', font, screen, screen_colours['retry_text'])
                         time.sleep(1)
                         spinner.spin()
-                        state.setState(States.SPIN)
+                        state.setState(StateType.SPIN)
                         break
-            case States.INSUFFICIENT:
+            case StateType.INSUFFICIENT:
                 # when not enough money to spin
                 manager.displayResult("Not enough money", font, screen, screen_colours['insufficient_text'])
 

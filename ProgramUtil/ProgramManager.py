@@ -1,13 +1,13 @@
 # this class will store and manage runtime variables
 import sys
 import pygame
-from states import States
-import database as db
-import leetscore
+from ProgramUtil.States import StateType
+from Database import Database as db
+from DataSource import Leetscore
 
 
 class Manager:
-    def __init__(self, current_aspect=(1600, 900), current_degree=0, current_velocity=0, current_state=States.MAIN):
+    def __init__(self, current_aspect=(1600, 900), current_degree=0, current_velocity=0, current_state=StateType.MAIN):
         self.current_aspect = current_aspect
         self.current_degree = current_degree
         self.current_velocity = current_velocity
@@ -16,7 +16,7 @@ class Manager:
     @staticmethod
     def startUp():
         # get initial data
-        username = leetscore.getUsername()
+        username = Leetscore.getUsername()
         data, gold = db.refresh()
         return username, data['easy'], data['medium'], data['hard'], gold
 
@@ -44,14 +44,14 @@ class Manager:
                 self.setState(state.getState())
                 self.setAspect((event.w, event.h))
                 self.updateSpinner(spinner)
-                state.setState(States.RESIZE)
+                state.setState(StateType.RESIZE)
 
             # detect maximise/minimise
             elif event.type == pygame.ACTIVEEVENT and event.state == 6:
                 self.setState(state.getState())
                 self.setAspect(screen.get_size())
                 self.updateSpinner(spinner)
-                state.setState(States.RESIZE)
+                state.setState(StateType.RESIZE)
 
     @staticmethod
     def exitCheck(action):

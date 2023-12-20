@@ -35,5 +35,5 @@ def readCustomisationDefault():
 
 
 def readRates():
-    df = pd.read_csv('rates.txt')
+    df = pd.read_csv('../rates.txt')
     return df['choice'].tolist(), df['weight'].tolist()

@@ -1,5 +1,5 @@
 import pygame
-import database
+from Database import Database
 
 from UI.Text.Text import Text
 

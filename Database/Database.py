@@ -1,10 +1,10 @@
 import sqlite3
-import leetscore
-from readConfig import readWheelDefault
+from DataSource import Leetscore
+from ProgramUtil.ReadConfig import readWheelDefault
 
 reward_config = readWheelDefault()
 
-connection = sqlite3.connect("database.db")
+connection = sqlite3.connect("../database.db")
 
 # allows return rows to be converted to dictionary
 connection.row_factory = sqlite3.Row
@@ -15,14 +15,14 @@ try:
 except sqlite3.OperationalError:
     pass
 
-USER = leetscore.getUsername()
+USER = Leetscore.getUsername()
 
 
 def read():
     rows = cursor.execute("SELECT username, easy, medium, hard, used FROM leetData WHERE username = ?", (USER,)).fetchall()
     if not rows:
         # fetch and update data
-        fetchData = leetscore.getQuestions()  # get data from api
+        fetchData = Leetscore.getQuestions()  # get data from api
         cursor.execute("INSERT INTO leetData VALUES (?, ?, ?, ?, ?)",
                        (USER, fetchData['easy'], fetchData['medium'], fetchData['hard'], 0))
         connection.commit()
@@ -82,7 +82,7 @@ def getUsable(rows=None):
 
 
 def refresh():
-    data = leetscore.getQuestions()
+    data = Leetscore.getQuestions()
     usable, rows = getUsable()
     update(data, rows=rows)
     return data, usable

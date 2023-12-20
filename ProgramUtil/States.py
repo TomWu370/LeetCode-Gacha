@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class States(Enum):
+class StateType(Enum):
     # STATES
     MAIN = 0
     RESULT = 1
@@ -11,7 +11,7 @@ class States(Enum):
 
 
 class State:
-    def __init__(self, state=States.MAIN):
+    def __init__(self, state=StateType.MAIN):
         self.__state = state
 
     def setState(self, new_state):

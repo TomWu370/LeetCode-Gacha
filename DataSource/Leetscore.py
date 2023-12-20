@@ -1,5 +1,5 @@
 import leetcode
-from readConfig import readDefault
+from ProgramUtil.ReadConfig import readDefault
 
 DIFFICULTY = {1: 'easy',
               2: 'medium',
