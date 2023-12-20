@@ -1,17 +1,14 @@
 import os
+from pathlib import Path
 from ast import literal_eval
 from configparser import ConfigParser
 import pandas as pd
 
 config = ConfigParser()
-config.read("./config.ini")
-
-files = [f for f in os.listdir('.') if os.path.isfile(f)]
-print(files)
+config.read(os.path.join(Path(__file__).parents[1],'config.ini'))
 
 
 def readDefault():
-    print(config)
     configs = config['DEFAULT']
     return configs['session_cookie'], configs['csrf_token']
 

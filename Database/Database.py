@@ -4,7 +4,7 @@ from ProgramUtil.ReadConfig import readWheelDefault
 
 reward_config = readWheelDefault()
 
-connection = sqlite3.connect("../database.db")
+connection = sqlite3.connect("database.db")
 
 # allows return rows to be converted to dictionary
 connection.row_factory = sqlite3.Row
@@ -15,14 +15,18 @@ try:
 except sqlite3.OperationalError:
     pass
 
-USER = Leetscore.getUsername()
+try:
+    USER = Leetscore.getUsername()
+except Exception:
+    USER = "Default"
 
 
-def read():
+def read(fetchData=None):
     rows = cursor.execute("SELECT username, easy, medium, hard, used FROM leetData WHERE username = ?", (USER,)).fetchall()
     if not rows:
         # fetch and update data
-        fetchData = Leetscore.getQuestions()  # get data from api
+        if not fetchData:
+            fetchData = Leetscore.getQuestions()  # get data from api
         cursor.execute("INSERT INTO leetData VALUES (?, ?, ?, ?, ?)",
                        (USER, fetchData['easy'], fetchData['medium'], fetchData['hard'], 0))
         connection.commit()
@@ -86,6 +90,7 @@ def refresh():
     update(data)
     usable, _ = getUsable()
     return data, usable
+
 
 
 if __name__ == '__main__':
