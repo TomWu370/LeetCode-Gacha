@@ -4,7 +4,7 @@ import database
 from UI.Text.Text import Text
 
 
-class variableText(Text):
+class VariableText(Text):
     def __init__(self, screen, x, y, width, height, variable, font, buttonText=None):
         super().__init__()
         self.screen = screen

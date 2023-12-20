@@ -2,7 +2,8 @@ import pygame
 from time import time
 from readConfig import readScreenDefault, readSpinnerDefault, readCustomisationDefault, readRates
 from programManager import Manager
-from UI import ui
+from UI.Button import Button, CircleButton, RectangleButton
+from UI.Text import Text, VariableText
 from spinner import Spinner
 from states import States, State
 from wheel import Wheel
@@ -42,22 +43,22 @@ while True:
                       starting_degree=manager.getDegree(), clockwise=clockwise)
 
     # initialise buttons
-    ui.Button.init()
-    ui.Text.init()
+    Button.init()
+    Text.init()
 
-    username = ui.variableText(stat_surf, wheel_aspect[0], 1 * text_gap, text_w, text_h, name, font, "Username")
-    easy_qu = ui.variableText(stat_surf, wheel_aspect[0], 2 * text_gap, text_w, text_h, easy, font, "Easy")
-    medium_qu = ui.variableText(stat_surf, wheel_aspect[0], 3 * text_gap, text_w, text_h, medium, font, "Medium")
-    hard_qu = ui.variableText(stat_surf, wheel_aspect[0], 4 * text_gap, text_w, text_h, hard, font, "Hard")
-    currency = ui.variableText(stat_surf, wheel_aspect[0], 5 * text_gap, text_w, text_h, money, font, "Currency")
-    texts = ui.Text.getList()
+    username = VariableText(stat_surf, wheel_aspect[0], 1 * text_gap, text_w, text_h, name, font, "Username")
+    easy_qu = VariableText(stat_surf, wheel_aspect[0], 2 * text_gap, text_w, text_h, easy, font, "Easy")
+    medium_qu = VariableText(stat_surf, wheel_aspect[0], 3 * text_gap, text_w, text_h, medium, font, "Medium")
+    hard_qu = VariableText(stat_surf, wheel_aspect[0], 4 * text_gap, text_w, text_h, hard, font, "Hard")
+    currency = VariableText(stat_surf, wheel_aspect[0], 5 * text_gap, text_w, text_h, money, font, "Currency")
+    texts = Text.getList()
 
-    refreshButton = ui.RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh",
-                                       ui.variableText.processTexts, texts[1:])  # ignore username
+    refreshButton = RectangleButton(stat_surf, wheel_aspect[0], 0, 100, 20, font, "Refresh",
+                                       VariableText.processTexts, texts[1:])  # ignore username
     # + 15 on wheel_centre[0] is micro adjustment
-    startButton = ui.CircleButton(wheel_surf, (wheel_centre[0] + 15, wheel_centre[1]), 20, 0, font,
-                                  [Spinner.spin, ui.variableText.processTexts], [spinner, texts[1:], state])
-    buttons = ui.Button.getList()
+    startButton = CircleButton(wheel_surf, (wheel_centre[0] + 15, wheel_centre[1]), 20, 0, font,
+                                  [Spinner.spin, VariableText.processTexts], [spinner, texts[1:], state])
+    buttons = Button.getList()
 
     while state.getState() != States.RESIZE:
         pygame.display.update()
