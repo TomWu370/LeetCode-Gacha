@@ -19,8 +19,8 @@ Project Structure:
 
 
 
-To build an executable yourself:
-1)Install pyinstaller with pip install pyinstaller
+To build an executable yourself: <br>
+1)Install pyinstaller with pip install pyinstaller <br>
 2)run command in home directory, pyinstaller ./main.py --onefile --windowed
 
 Further Improvement:
