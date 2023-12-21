@@ -5,7 +5,9 @@ from configparser import ConfigParser
 import pandas as pd
 
 config = ConfigParser()
-config.read(os.path.join(Path(__file__).parents[1],'config.ini'))
+config.read(os.path.join(Path(__file__).parents[1], 'config.ini'))
+if not dict(config['DEFAULT']):
+    config.read(os.path.join(Path(__file__).parents[0], 'config.ini'))
 
 
 def readDefault():
