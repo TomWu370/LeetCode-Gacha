@@ -13,6 +13,8 @@ from Wheel.WheelBody import Wheel
 
 # Initialisation for pygame
 pygame.init()
+Clock = pygame.time.Clock()
+MAX_FPS = 60
 font = pygame.font.SysFont(None, 28)
 
 # variable fetching/reading
@@ -107,6 +109,7 @@ while True:
                 manager.displayResult("Not enough money", font, screen, screen_colours['insufficient_text'])
 
         manager.processEvents(screen, state, spinner)
+        Clock.tick(MAX_FPS)
 
 # Issue/Improvement 1) ghost shadow on spinner
 
