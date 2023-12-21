@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from ast import literal_eval
 from configparser import ConfigParser
@@ -6,8 +7,12 @@ import pandas as pd
 
 config = ConfigParser()
 config.read(os.path.join(Path(__file__).parents[1], 'config.ini'))
+files = [f for f in os.listdir(os.path.join(Path(__file__).parents[1])) if os.path.isfile(f)]
+print(files)
 if not dict(config['DEFAULT']):
     config.read(os.path.join(Path(__file__).parents[0], 'config.ini'))
+if not dict(config['DEFAULT']):
+    config.read(os.path.dirname(sys.executable) + '/config.ini')
 
 
 def readDefault():
