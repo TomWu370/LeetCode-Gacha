@@ -49,6 +49,7 @@ class DatabaseTest(unittest.TestCase):
         self.assertEqual(updatedUsed, 0)
 
     def test_spend_sufficient(self):
+        # Spend currency, if sufficient, then update used field
         Username = 'Tom'
         Database.USER = Username
         cost = 100
@@ -60,6 +61,7 @@ class DatabaseTest(unittest.TestCase):
         self.assertEqual(Database.read()['used'], cost)  # since no currency is spent, spending once = the cost
 
     def test_spend_insufficient(self):
+        # Spend currency, if insufficient, then don't update used field
         Username = 'Tom'
         Database.USER = Username
         cost = 10000
@@ -93,9 +95,11 @@ class DatabaseTest(unittest.TestCase):
         Database.USER = Username
         Database.set(Data, used)
         readData = Database.read(Data)
+        # Check before refresh
         self.assertEqual(readData, {'username': Username, 'easy': 50, 'medium': 50, 'hard': 50, 'used': 0})
         newData = {'easy': 55, 'medium': 50, 'hard': 50}  # User completes 5 more easy leetcode questions
         newReadData, _ = Database.refresh(newData)
+        # Check after refresh
         self.assertEqual(newReadData, {'easy': 55, 'medium': 50, 'hard': 50})
 
 
