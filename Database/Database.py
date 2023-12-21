@@ -63,11 +63,13 @@ def resetUsed(used=0):
     connection.commit()
 
 
-def spend():
+def spend(amount=1, cost=None):
     rows = read()
+    if not cost:
+        cost = reward_config['cost']
     usable, _ = getUsable(rows)
-    if usable >= reward_config['cost'] * 1:
-        used = reward_config['cost'] * 1  # 1 equal to amount
+    if usable >= cost * amount:
+        used = cost * amount  # default 1, to allow for multi spend
         update(rows, used, rows)
         return True
     else:
@@ -85,8 +87,9 @@ def getUsable(rows=None):
     return usable, rows
 
 
-def refresh():
-    data = Leetscore.getQuestions()
+def refresh(data=None):
+    if not data:
+        data = Leetscore.getQuestions()
     update(data)
     usable, _ = getUsable()
     return data, usable
